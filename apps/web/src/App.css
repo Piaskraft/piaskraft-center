@@ -1,0 +1,54 @@
+.app {
+  min-height: 100vh;
+  background: #f5f6f8;
+  color: #1f2933;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.welcome-card {
+  width: 100%;
+  max-width: 900px;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 48px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+}
+
+.eyebrow {
+  color: #ff6600;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+}
+
+h1 {
+  font-size: 42px;
+  line-height: 1.1;
+  margin: 0 0 20px;
+}
+
+.description {
+  max-width: 680px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #52606d;
+  margin-bottom: 32px;
+}
+
+.modules {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.modules div {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 14px;
+  padding: 16px;
+  font-weight: 600;
+}
