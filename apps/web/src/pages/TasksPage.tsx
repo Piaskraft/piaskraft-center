@@ -55,8 +55,9 @@ export function TasksPage() {
   const filteredTasks = tasks.filter((task) => {
     if (activeFilter === 'Wszystkie') return true;
     if (activeFilter === 'Admin') return task.assignedTo === 'Admin';
-    if (activeFilter === 'Operator') return task.assignedTo === 'Operator';
-    if (activeFilter === 'Pilne') return task.priority === 'Pilny';
+   if (activeFilter === 'Operator') return task.assignedTo === 'Operator';
+if (activeFilter === 'Oboje') return task.assignedTo === 'Oboje';
+if (activeFilter === 'Pilne') return task.priority === 'Pilny';
     if (activeFilter === 'Zrobione') return task.status === 'Zrobione';
 
     return true;
@@ -66,7 +67,8 @@ const taskFilterCounts: Record<TaskFilter, number> = {
   Wszystkie: tasks.length,
   Admin: tasks.filter((task) => task.assignedTo === 'Admin').length,
   Operator: tasks.filter((task) => task.assignedTo === 'Operator').length,
-  Pilne: tasks.filter((task) => task.priority === 'Pilny').length,
+Oboje: tasks.filter((task) => task.assignedTo === 'Oboje').length,
+Pilne: tasks.filter((task) => task.priority === 'Pilny').length,
   Zrobione: tasks.filter((task) => task.status === 'Zrobione').length,
 };
 

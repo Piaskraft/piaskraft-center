@@ -24,8 +24,7 @@ export type TaskStatus =
   | 'Czeka na sprawdzenie'
   | 'Zrobione'
   | 'Anulowane';
-
-export type AssignedUser = 'Admin' | 'Operator';
+export type AssignedUser = 'Admin' | 'Operator' | 'Oboje';
 
 export type Task = {
   id: number;

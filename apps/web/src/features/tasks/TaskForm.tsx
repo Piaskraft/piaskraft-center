@@ -72,9 +72,10 @@ export function TaskForm({ onAddTask }: TaskFormProps) {
         <label>
           Przypisane do
           <select name="assignedTo" defaultValue="Operator">
-            <option>Admin</option>
-            <option>Operator</option>
-          </select>
+  <option>Admin</option>
+  <option>Operator</option>
+  <option>Oboje</option>
+</select>
         </label>
 
         <label>
