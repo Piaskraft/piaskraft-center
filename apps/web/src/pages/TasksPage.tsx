@@ -1,7 +1,16 @@
 import { useState } from 'react';
 import { TaskForm, type NewTaskData } from '../features/tasks/TaskForm';
 import { tasks as initialTasks } from '../features/tasks/taskMockData';
-import type { Task } from '../features/tasks/taskTypes';
+import type { Task, TaskStatus } from '../features/tasks/taskTypes';
+
+const taskStatuses: TaskStatus[] = [
+  'Nowe',
+  'Do zrobienia',
+  'W trakcie',
+  'Czeka na sprawdzenie',
+  'Zrobione',
+  'Anulowane',
+];
 
 export function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
@@ -27,6 +36,22 @@ export function TasksPage() {
 
     setTasks((currentTasks) => [task, ...currentTasks]);
     setIsFormVisible(false);
+  }
+
+  function handleChangeTaskStatus(taskId: number, status: TaskStatus) {
+    const today = new Date().toISOString().slice(0, 10);
+
+    setTasks((currentTasks) =>
+      currentTasks.map((task) =>
+        task.id === taskId
+          ? {
+              ...task,
+              status,
+              updatedAt: today,
+            }
+          : task,
+      ),
+    );
   }
 
   return (
@@ -59,7 +84,19 @@ export function TasksPage() {
 
             <div className="task-meta">
               <span>{task.priority}</span>
-              <span>{task.status}</span>
+
+              <select
+                className="status-select"
+                value={task.status}
+                onChange={(event) =>
+                  handleChangeTaskStatus(task.id, event.target.value as TaskStatus)
+                }
+              >
+                {taskStatuses.map((status) => (
+                  <option key={status}>{status}</option>
+                ))}
+              </select>
+
               {task.date && <span>{task.date}</span>}
               {task.time && <span>{task.time}</span>}
             </div>
