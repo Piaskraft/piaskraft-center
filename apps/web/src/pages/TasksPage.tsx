@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { TaskCard } from '../features/tasks/TaskCard';
 import { TaskForm, type NewTaskData } from '../features/tasks/TaskForm';
 import { tasks as initialTasks } from '../features/tasks/taskMockData';
 import type { Task, TaskStatus } from '../features/tasks/taskTypes';
@@ -109,33 +110,12 @@ export function TasksPage() {
 
       <div className="tasks-list">
         {filteredTasks.map((task) => (
-          <article key={task.id} className="task-card">
-            <div>
-              <h3>{task.title}</h3>
-              <p>
-                {task.category} · {task.assignedTo}
-              </p>
-            </div>
-
-            <div className="task-meta">
-              <span>{task.priority}</span>
-
-              <select
-                className="status-select"
-                value={task.status}
-                onChange={(event) =>
-                  handleChangeTaskStatus(task.id, event.target.value as TaskStatus)
-                }
-              >
-                {taskStatuses.map((status) => (
-                  <option key={status}>{status}</option>
-                ))}
-              </select>
-
-              {task.date && <span>{task.date}</span>}
-              {task.time && <span>{task.time}</span>}
-            </div>
-          </article>
+          <TaskCard
+            key={task.id}
+            task={task}
+            taskStatuses={taskStatuses}
+            onChangeStatus={handleChangeTaskStatus}
+          />
         ))}
       </div>
     </section>
