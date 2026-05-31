@@ -108,16 +108,23 @@ export function TasksPage() {
         ))}
       </div>
 
-      <div className="tasks-list">
-        {filteredTasks.map((task) => (
-          <TaskCard
-            key={task.id}
-            task={task}
-            taskStatuses={taskStatuses}
-            onChangeStatus={handleChangeTaskStatus}
-          />
-        ))}
-      </div>
+      {filteredTasks.length === 0 ? (
+  <div className="empty-state">
+    <h3>Brak zadań</h3>
+    <p>Nie ma zadań pasujących do wybranego filtra.</p>
+  </div>
+) : (
+  <div className="tasks-list">
+    {filteredTasks.map((task) => (
+      <TaskCard
+        key={task.id}
+        task={task}
+        taskStatuses={taskStatuses}
+        onChangeStatus={handleChangeTaskStatus}
+      />
+    ))}
+  </div>
+)}
     </section>
   );
 }
