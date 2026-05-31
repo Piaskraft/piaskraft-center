@@ -434,3 +434,8 @@
   gap: 16px;
   flex-wrap: wrap;
 }
+.danger-badge {
+  background: #fef2f2 !important;
+  border-color: #fecaca !important;
+  color: #b91c1c !important;
+}

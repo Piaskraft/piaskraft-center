@@ -17,6 +17,10 @@ export function TaskCard({
   const [isDetailsVisible, setIsDetailsVisible] = useState(false);
   const [isCommentFormVisible, setIsCommentFormVisible] = useState(false);
 
+  const today = new Date().toISOString().slice(0, 10);
+  const isOverdue =
+    Boolean(task.date) && task.date < today && task.status !== 'Zrobione';
+
   function handleAddComment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -98,6 +102,8 @@ export function TaskCard({
       </div>
 
       <div className="task-meta">
+        {isOverdue && <span className="danger-badge">Po terminie</span>}
+
         <span>{task.priority}</span>
 
         <select
