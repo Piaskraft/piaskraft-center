@@ -20,29 +20,42 @@ type TaskFormProps = {
 
 export function TaskForm({ onAddTask }: TaskFormProps) {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
+  const formData = new FormData(event.currentTarget);
 
-    const title = String(formData.get('title') || '').trim();
+  const title = String(formData.get('title') || '').trim();
+  const date = String(formData.get('date') || '');
 
-    if (!title) {
-      alert('Wpisz tytuł zadania.');
-      return;
-    }
-
-    onAddTask({
-      title,
-      description: String(formData.get('description') || '').trim(),
-      assignedTo: formData.get('assignedTo') as AssignedUser,
-      category: formData.get('category') as TaskCategory,
-      priority: formData.get('priority') as TaskPriority,
-      date: String(formData.get('date') || ''),
-      time: String(formData.get('time') || ''),
-    });
-
-    event.currentTarget.reset();
+  if (!title) {
+    alert('Wpisz tytuł zadania.');
+    return;
   }
+
+  if (!date) {
+    alert('Wybierz datę wykonania zadania.');
+    return;
+  }
+
+  const year = Number(date.slice(0, 4));
+
+  if (year < 2026 || year > 2035) {
+    alert('Wybierz poprawną datę między 2026 a 2035 rokiem.');
+    return;
+  }
+
+  onAddTask({
+    title,
+    description: String(formData.get('description') || '').trim(),
+    assignedTo: formData.get('assignedTo') as AssignedUser,
+    category: formData.get('category') as TaskCategory,
+    priority: formData.get('priority') as TaskPriority,
+    date,
+    time: String(formData.get('time') || ''),
+  });
+
+  event.currentTarget.reset();
+}
 
   return (
     <form className="task-form" onSubmit={handleSubmit}>
