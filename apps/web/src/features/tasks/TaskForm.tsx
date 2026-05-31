@@ -1,3 +1,4 @@
+import { useState, type FormEvent } from 'react';
 import type {
   AssignedUser,
   TaskCategory,
@@ -19,46 +20,55 @@ type TaskFormProps = {
 };
 
 export function TaskForm({ onAddTask }: TaskFormProps) {
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-  event.preventDefault();
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const formData = new FormData(event.currentTarget);
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
 
-  const title = String(formData.get('title') || '').trim();
-  const date = String(formData.get('date') || '');
+    const formData = new FormData(event.currentTarget);
 
-  if (!title) {
-    alert('Wpisz tytuł zadania.');
-    return;
+    const title = String(formData.get('title') || '').trim();
+    const date = String(formData.get('date') || '');
+
+    if (!title) {
+      setErrorMessage('Wpisz tytuł zadania.');
+      return;
+    }
+
+    if (!date) {
+      setErrorMessage('Wybierz datę wykonania zadania.');
+      return;
+    }
+
+    const year = Number(date.slice(0, 4));
+
+    if (year < 2026 || year > 2035) {
+      setErrorMessage('Wybierz poprawną datę między 2026 a 2035 rokiem.');
+      return;
+    }
+
+    onAddTask({
+      title,
+      description: String(formData.get('description') || '').trim(),
+      assignedTo: formData.get('assignedTo') as AssignedUser,
+      category: formData.get('category') as TaskCategory,
+      priority: formData.get('priority') as TaskPriority,
+      date,
+      time: String(formData.get('time') || ''),
+    });
+
+    setErrorMessage('');
+    event.currentTarget.reset();
   }
-
-  if (!date) {
-    alert('Wybierz datę wykonania zadania.');
-    return;
-  }
-
-  const year = Number(date.slice(0, 4));
-
-  if (year < 2026 || year > 2035) {
-    alert('Wybierz poprawną datę między 2026 a 2035 rokiem.');
-    return;
-  }
-
-  onAddTask({
-    title,
-    description: String(formData.get('description') || '').trim(),
-    assignedTo: formData.get('assignedTo') as AssignedUser,
-    category: formData.get('category') as TaskCategory,
-    priority: formData.get('priority') as TaskPriority,
-    date,
-    time: String(formData.get('time') || ''),
-  });
-
-  event.currentTarget.reset();
-}
 
   return (
-    <form className="task-form" onSubmit={handleSubmit}>
+    <form
+      className="task-form"
+      onSubmit={handleSubmit}
+      onReset={() => setErrorMessage('')}
+    >
+      {errorMessage && <div className="form-error">{errorMessage}</div>}
+
       <div className="form-grid">
         <label>
           Tytuł zadania
@@ -72,10 +82,10 @@ export function TaskForm({ onAddTask }: TaskFormProps) {
         <label>
           Przypisane do
           <select name="assignedTo" defaultValue="Operator">
-  <option>Admin</option>
-  <option>Operator</option>
-  <option>Oboje</option>
-</select>
+            <option>Admin</option>
+            <option>Operator</option>
+            <option>Oboje</option>
+          </select>
         </label>
 
         <label>
