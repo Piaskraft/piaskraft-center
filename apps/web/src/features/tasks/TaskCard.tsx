@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import type { Task, TaskStatus } from './taskTypes';
+import { isTaskOverdue } from './taskUtils';
 
 type TaskCardProps = {
   task: Task;
@@ -17,9 +18,7 @@ export function TaskCard({
   const [isDetailsVisible, setIsDetailsVisible] = useState(false);
   const [isCommentFormVisible, setIsCommentFormVisible] = useState(false);
 
-  const today = new Date().toISOString().slice(0, 10);
-  const isOverdue =
-    Boolean(task.date) && task.date < today && task.status !== 'Zrobione';
+const isOverdue = isTaskOverdue(task);
 
   function handleAddComment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
