@@ -2,26 +2,12 @@ import { useState } from 'react';
 import { TaskCard } from '../features/tasks/TaskCard';
 import { TaskForm, type NewTaskData } from '../features/tasks/TaskForm';
 import { tasks as initialTasks } from '../features/tasks/taskMockData';
+import {
+  taskFilters,
+  taskStatuses,
+  type TaskFilter,
+} from '../features/tasks/taskOptions';
 import type { Task, TaskStatus } from '../features/tasks/taskTypes';
-
-const taskStatuses: TaskStatus[] = [
-  'Nowe',
-  'Do zrobienia',
-  'W trakcie',
-  'Czeka na sprawdzenie',
-  'Zrobione',
-  'Anulowane',
-];
-
-type TaskFilter = 'Wszystkie' | 'Admin' | 'Operator' | 'Pilne' | 'Zrobione';
-
-const taskFilters: TaskFilter[] = [
-  'Wszystkie',
-  'Admin',
-  'Operator',
-  'Pilne',
-  'Zrobione',
-];
 
 export function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
