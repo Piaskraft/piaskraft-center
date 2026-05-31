@@ -37,6 +37,31 @@ export function TasksPage() {
     setIsFormVisible(false);
   }
 
+  function handleAddTaskComment(taskId: number, content: string) {
+  const today = new Date().toISOString().slice(0, 10);
+
+  setTasks((currentTasks) =>
+    currentTasks.map((task) =>
+      task.id === taskId
+        ? {
+            ...task,
+            comments: [
+              ...task.comments,
+              {
+                id: Date.now(),
+                author: 'Admin',
+                content,
+                createdAt: today,
+              },
+            ],
+            updatedAt: today,
+          }
+        : task,
+    ),
+  );
+}
+
+
   function handleChangeTaskStatus(taskId: number, status: TaskStatus) {
     const today = new Date().toISOString().slice(0, 10);
 
@@ -115,11 +140,12 @@ Pilne: tasks.filter((task) => task.priority === 'Pilny').length,
   <div className="tasks-list">
     {filteredTasks.map((task) => (
       <TaskCard
-        key={task.id}
-        task={task}
-        taskStatuses={taskStatuses}
-        onChangeStatus={handleChangeTaskStatus}
-      />
+  key={task.id}
+  task={task}
+  taskStatuses={taskStatuses}
+  onChangeStatus={handleChangeTaskStatus}
+  onAddComment={handleAddTaskComment}
+/>
     ))}
   </div>
 )}

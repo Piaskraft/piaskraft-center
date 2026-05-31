@@ -370,3 +370,57 @@
   margin-bottom: 16px;
   font-weight: 700;
 }
+.task-comments {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-comment {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.task-comment strong {
+  margin-right: 8px;
+}
+
+.task-comment span {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.task-comment p {
+  margin: 6px 0 0;
+  color: #374151;
+}
+
+.comment-form {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+}
+
+.comment-form input {
+  flex: 1;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.small-button {
+  padding: 10px 14px;
+}
+
+.text-button {
+  margin-top: 12px;
+  border: 0;
+  background: transparent;
+  color: #ff6600;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
