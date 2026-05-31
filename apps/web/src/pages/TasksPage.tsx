@@ -12,9 +12,20 @@ const taskStatuses: TaskStatus[] = [
   'Anulowane',
 ];
 
+type TaskFilter = 'Wszystkie' | 'Admin' | 'Operator' | 'Pilne' | 'Zrobione';
+
+const taskFilters: TaskFilter[] = [
+  'Wszystkie',
+  'Admin',
+  'Operator',
+  'Pilne',
+  'Zrobione',
+];
+
 export function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<TaskFilter>('Wszystkie');
 
   function handleAddTask(newTask: NewTaskData) {
     const today = new Date().toISOString().slice(0, 10);
@@ -54,6 +65,16 @@ export function TasksPage() {
     );
   }
 
+  const filteredTasks = tasks.filter((task) => {
+    if (activeFilter === 'Wszystkie') return true;
+    if (activeFilter === 'Admin') return task.assignedTo === 'Admin';
+    if (activeFilter === 'Operator') return task.assignedTo === 'Operator';
+    if (activeFilter === 'Pilne') return task.priority === 'Pilny';
+    if (activeFilter === 'Zrobione') return task.status === 'Zrobione';
+
+    return true;
+  });
+
   return (
     <section className="tasks-page">
       <div className="page-actions">
@@ -72,8 +93,22 @@ export function TasksPage() {
 
       {isFormVisible && <TaskForm onAddTask={handleAddTask} />}
 
+      <div className="task-filters">
+        {taskFilters.map((filter) => (
+          <button
+            key={filter}
+            className={
+              activeFilter === filter ? 'filter-button active' : 'filter-button'
+            }
+            onClick={() => setActiveFilter(filter)}
+          >
+            {filter}
+          </button>
+        ))}
+      </div>
+
       <div className="tasks-list">
-        {tasks.map((task) => (
+        {filteredTasks.map((task) => (
           <article key={task.id} className="task-card">
             <div>
               <h3>{task.title}</h3>
