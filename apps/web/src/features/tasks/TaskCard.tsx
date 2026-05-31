@@ -21,8 +21,9 @@ export function TaskCard({
         )}
 
         <p className="task-subline">
-          {task.category} · {task.assignedTo} · utworzył: {task.createdBy}
-        </p>
+  {task.category} · {task.assignedTo} · utworzył: {task.createdBy} · komentarze:{' '}
+  {task.comments.length}
+</p>
       </div>
 
       <div className="task-meta">

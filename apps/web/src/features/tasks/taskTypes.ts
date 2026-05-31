@@ -26,6 +26,13 @@ export type TaskStatus =
   | 'Anulowane';
 export type AssignedUser = 'Admin' | 'Operator' | 'Oboje';
 
+export type TaskComment = {
+  id: number;
+  author: AssignedUser;
+  content: string;
+  createdAt: string;
+};
+
 export type Task = {
   id: number;
   title: string;
@@ -36,6 +43,7 @@ export type Task = {
   status: TaskStatus;
   date: string;
   time?: string;
+  comments: TaskComment[];
   createdBy: AssignedUser;
   createdAt: string;
   updatedAt: string;

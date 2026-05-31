@@ -27,6 +27,7 @@ export function TasksPage() {
       status: 'Nowe',
       date: newTask.date,
       time: newTask.time,
+      comments: [],
       createdBy: 'Admin',
       createdAt: today,
       updatedAt: today,
