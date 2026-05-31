@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AppLayout } from './layouts/AppLayout';
 import { DashboardPage } from './pages/DashboardPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
+import { TasksPage } from './pages/TasksPage';
 
 function App() {
   return (
@@ -10,15 +11,7 @@ function App() {
         <Route path="/" element={<AppLayout />}>
           <Route index element={<DashboardPage />} />
 
-          <Route
-            path="zadania"
-            element={
-              <PlaceholderPage
-                title="Zadania"
-                description="System zadań dla admina i operatora: statusy, priorytety, terminy i komentarze."
-              />
-            }
-          />
+         <Route path="zadania" element={<TasksPage />} />
 
           <Route
             path="kalendarz"
