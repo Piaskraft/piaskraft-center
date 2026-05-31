@@ -308,3 +308,17 @@
   border-color: #ff6600;
   color: #ffffff;
 }
+.task-main {
+  max-width: 620px;
+}
+
+.task-description {
+  margin: 0 0 8px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.task-subline {
+  margin: 0;
+  color: #6b7280;
+}

@@ -13,10 +13,15 @@ export function TaskCard({
 }: TaskCardProps) {
   return (
     <article className="task-card">
-      <div>
+      <div className="task-main">
         <h3>{task.title}</h3>
-        <p>
-          {task.category} · {task.assignedTo}
+
+        {task.description && (
+          <p className="task-description">{task.description}</p>
+        )}
+
+        <p className="task-subline">
+          {task.category} · {task.assignedTo} · utworzył: {task.createdBy}
         </p>
       </div>
 
