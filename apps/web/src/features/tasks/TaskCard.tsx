@@ -14,6 +14,7 @@ export function TaskCard({
   onChangeStatus,
   onAddComment,
 }: TaskCardProps) {
+  const [isDetailsVisible, setIsDetailsVisible] = useState(false);
   const [isCommentFormVisible, setIsCommentFormVisible] = useState(false);
 
   function handleAddComment(event: FormEvent<HTMLFormElement>) {
@@ -27,6 +28,7 @@ export function TaskCard({
     onAddComment(task.id, content);
     event.currentTarget.reset();
     setIsCommentFormVisible(false);
+    setIsDetailsVisible(true);
   }
 
   return (
@@ -34,50 +36,65 @@ export function TaskCard({
       <div className="task-main">
         <h3>{task.title}</h3>
 
-        {task.description && (
-          <p className="task-description">{task.description}</p>
-        )}
-
         <p className="task-subline">
           {task.category} · {task.assignedTo} · utworzył: {task.createdBy} ·
           komentarze: {task.comments.length}
         </p>
 
-        {task.comments.length > 0 && (
-          <div className="task-comments">
-            {task.comments.map((comment) => (
-              <div key={comment.id} className="task-comment">
-                <strong>{comment.author}</strong>
-                <span>{comment.createdAt}</span>
-                <p>{comment.content}</p>
+        {isDetailsVisible && (
+          <div className="task-details">
+            {task.description && (
+              <p className="task-description">{task.description}</p>
+            )}
+
+            {task.comments.length > 0 && (
+              <div className="task-comments">
+                {task.comments.map((comment) => (
+                  <div key={comment.id} className="task-comment">
+                    <strong>{comment.author}</strong>
+                    <span>{comment.createdAt}</span>
+                    <p>{comment.content}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
+
+            {isCommentFormVisible && (
+              <form className="comment-form" onSubmit={handleAddComment}>
+                <input
+                  name="comment"
+                  type="text"
+                  placeholder="Wpisz komentarz do zadania..."
+                />
+
+                <button type="submit" className="primary-button small-button">
+                  Zapisz
+                </button>
+              </form>
+            )}
           </div>
         )}
 
-        {isCommentFormVisible && (
-          <form className="comment-form" onSubmit={handleAddComment}>
-            <input
-              name="comment"
-              type="text"
-              placeholder="Wpisz komentarz do zadania..."
-            />
+        <div className="task-actions">
+          <button
+            type="button"
+            className="text-button"
+            onClick={() => setIsDetailsVisible((currentValue) => !currentValue)}
+          >
+            {isDetailsVisible ? 'Ukryj szczegóły' : 'Pokaż szczegóły'}
+          </button>
 
-            <button type="submit" className="primary-button small-button">
-              Zapisz
-            </button>
-          </form>
-        )}
-
-        <button
-          type="button"
-          className="text-button"
-          onClick={() =>
-            setIsCommentFormVisible((currentValue) => !currentValue)
-          }
-        >
-          {isCommentFormVisible ? 'Anuluj komentarz' : 'Dodaj komentarz'}
-        </button>
+          <button
+            type="button"
+            className="text-button"
+            onClick={() => {
+              setIsDetailsVisible(true);
+              setIsCommentFormVisible((currentValue) => !currentValue);
+            }}
+          >
+            {isCommentFormVisible ? 'Anuluj komentarz' : 'Dodaj komentarz'}
+          </button>
+        </div>
       </div>
 
       <div className="task-meta">

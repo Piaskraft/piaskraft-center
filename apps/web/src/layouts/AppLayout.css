@@ -424,3 +424,13 @@
   cursor: pointer;
   padding: 0;
 }
+.task-details {
+  margin-top: 12px;
+}
+
+.task-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
