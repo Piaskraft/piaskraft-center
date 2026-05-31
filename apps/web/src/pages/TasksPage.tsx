@@ -76,6 +76,14 @@ export function TasksPage() {
     return true;
   });
 
+const taskFilterCounts: Record<TaskFilter, number> = {
+  Wszystkie: tasks.length,
+  Admin: tasks.filter((task) => task.assignedTo === 'Admin').length,
+  Operator: tasks.filter((task) => task.assignedTo === 'Operator').length,
+  Pilne: tasks.filter((task) => task.priority === 'Pilny').length,
+  Zrobione: tasks.filter((task) => task.status === 'Zrobione').length,
+};
+
   return (
     <section className="tasks-page">
       <div className="page-actions">
@@ -96,15 +104,16 @@ export function TasksPage() {
 
       <div className="task-filters">
         {taskFilters.map((filter) => (
-          <button
-            key={filter}
-            className={
-              activeFilter === filter ? 'filter-button active' : 'filter-button'
-            }
-            onClick={() => setActiveFilter(filter)}
-          >
-            {filter}
-          </button>
+        <button
+  key={filter}
+  className={
+    activeFilter === filter ? 'filter-button active' : 'filter-button'
+  }
+  onClick={() => setActiveFilter(filter)}
+>
+  {filter}
+  <span>{taskFilterCounts[filter]}</span>
+</button>
         ))}
       </div>
 
