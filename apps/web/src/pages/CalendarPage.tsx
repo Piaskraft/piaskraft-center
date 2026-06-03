@@ -106,10 +106,10 @@ function getNavigationLabels(viewMode: CalendarViewMode) {
 export function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<CalendarViewMode>('Tydzień');
-
-  const weekDays = getWeekDays(selectedDate);
-  const monthDays = getMonthDays(selectedDate);
-  const navigationLabels = getNavigationLabels(viewMode);
+const weekDays = getWeekDays(selectedDate);
+const monthDays = getMonthDays(selectedDate);
+const today = formatDate(new Date());
+const navigationLabels = getNavigationLabels(viewMode);
 
   function goToPreviousPeriod() {
     setSelectedDate((currentDate) => {
@@ -284,7 +284,14 @@ export function CalendarPage() {
       const dayTasks = tasks.filter((task) => task.date === day.date);
 
       return (
-        <article key={day.date} className="month-day-card">
+        <article
+  key={day.date}
+  className={
+    day.date === today
+      ? 'month-day-card month-day-card-today'
+      : 'month-day-card'
+  }
+>
           <div className="month-day-number">{day.dayNumber}</div>
           <div className="month-day-date">{day.date}</div>
 
