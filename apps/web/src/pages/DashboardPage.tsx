@@ -14,7 +14,13 @@ export function DashboardPage() {
 
   const overdueTasks = tasks.filter((task) => isTaskOverdue(task));
 
+  const urgentTasks = tasks.filter(
+    (task) => task.priority === 'Pilny' && task.status !== 'Anulowane',
+  );
+
   const doneTasks = tasks.filter((task) => task.status === 'Zrobione');
+
+  const cancelledTasks = tasks.filter((task) => task.status === 'Anulowane');
 
   return (
     <section className="dashboard-grid">
@@ -34,8 +40,18 @@ export function DashboardPage() {
       </div>
 
       <div className="dashboard-card">
+        <span>Pilne</span>
+        <strong>{urgentTasks.length}</strong>
+      </div>
+
+      <div className="dashboard-card">
         <span>Zrobione</span>
         <strong>{doneTasks.length}</strong>
+      </div>
+
+      <div className="dashboard-card">
+        <span>Anulowane</span>
+        <strong>{cancelledTasks.length}</strong>
       </div>
     </section>
   );
