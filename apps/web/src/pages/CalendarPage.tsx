@@ -155,12 +155,63 @@ export function CalendarPage() {
         </div>
       )}
 
-      {viewMode !== 'Tydzień' && viewMode !== 'Lista' && (
-        <div className="empty-state">
-          <h3>Widok „{viewMode}”</h3>
-          <p>Ten widok przygotujemy w kolejnym etapie kalendarza.</p>
-        </div>
-      )}
+      {viewMode === 'Dzień' && (
+  <div className="day-view">
+    <div className="day-view-header">
+      <h3>{formatDate(selectedDate)}</h3>
+      <p>Terminy wybranego dnia.</p>
+    </div>
+
+    {tasks.filter((task) => task.date === formatDate(selectedDate)).length === 0 ? (
+      <div className="empty-state">
+        <h3>Brak terminów</h3>
+        <p>Na ten dzień nie ma żadnych zaplanowanych zadań.</p>
+      </div>
+    ) : (
+      <div className="day-events">
+        {tasks
+          .filter((task) => task.date === formatDate(selectedDate))
+          .sort((a, b) => (a.time || '').localeCompare(b.time || ''))
+          .map((task) => {
+            const isOverdue = isTaskOverdue(task);
+
+            return (
+              <article
+                key={task.id}
+                className={
+                  isOverdue
+                    ? 'day-event day-event-overdue'
+                    : 'day-event'
+                }
+              >
+                <div className="day-event-time">
+                  {task.time || 'Bez godziny'}
+                </div>
+
+                <div className="day-event-content">
+                  <h3>{task.title}</h3>
+                  <p>
+                    {task.category} · {task.assignedTo} · {task.priority}
+                  </p>
+                </div>
+
+                <span className="calendar-status-badge">
+                  {getCalendarStatusLabel(task)}
+                </span>
+              </article>
+            );
+          })}
+      </div>
+    )}
+  </div>
+)}
+
+{viewMode === 'Miesiąc' && (
+  <div className="empty-state">
+    <h3>Widok „Miesiąc”</h3>
+    <p>Ten widok przygotujemy w kolejnym etapie kalendarza.</p>
+  </div>
+)}
 
       {viewMode === 'Tydzień' && (
         <div className="week-grid">

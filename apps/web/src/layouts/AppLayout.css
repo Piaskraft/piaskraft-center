@@ -706,3 +706,72 @@
   border-color: #fecaca;
   color: #b91c1c;
 }
+.day-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.day-view-header {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 20px 24px;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.06);
+}
+
+.day-view-header h3 {
+  margin: 0 0 6px;
+  font-size: 22px;
+}
+
+.day-view-header p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.day-events {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.day-event {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 18px 22px;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.day-event-time {
+  min-width: 110px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+  border-radius: 14px;
+  padding: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.day-event-content {
+  flex: 1;
+}
+
+.day-event-content h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.day-event-content p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.day-event-overdue .calendar-status-badge {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
