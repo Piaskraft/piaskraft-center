@@ -2,6 +2,15 @@ import { useState } from 'react';
 import { tasks } from '../features/tasks/taskMockData';
 import { isTaskOverdue } from '../features/tasks/taskUtils';
 
+type CalendarViewMode = 'Dzień' | 'Tydzień' | 'Miesiąc' | 'Lista';
+
+const calendarViewModes: CalendarViewMode[] = [
+  'Dzień',
+  'Tydzień',
+  'Miesiąc',
+  'Lista',
+];
+
 const weekDayNames = [
   'Poniedziałek',
   'Wtorek',
@@ -40,6 +49,7 @@ function getWeekDays(date: Date) {
 
 export function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [viewMode, setViewMode] = useState<CalendarViewMode>('Tydzień');
 
   const weekDays = getWeekDays(selectedDate);
 
@@ -68,7 +78,7 @@ export function CalendarPage() {
       <div className="page-actions">
         <div>
           <h2>Kalendarz</h2>
-          <p>Widok tygodnia z terminami zadań.</p>
+          <p>Widok czasu: dzień, tydzień, miesiąc i lista terminów.</p>
         </div>
 
         <div className="calendar-actions">
@@ -86,48 +96,69 @@ export function CalendarPage() {
         </div>
       </div>
 
-      <div className="week-grid">
-        {weekDays.map((day) => {
-          const dayTasks = tasks.filter((task) => task.date === day.date);
-
-          return (
-            <article key={day.date} className="week-day-card">
-              <div className="week-day-header">
-                <strong>{day.name}</strong>
-                <span>{day.date}</span>
-              </div>
-
-              {dayTasks.length === 0 ? (
-                <p className="week-empty">Brak terminów</p>
-              ) : (
-                <div className="week-events">
-                  {dayTasks.map((task) => {
-                    const isOverdue = isTaskOverdue(task);
-
-                    return (
-                      <div
-                        key={task.id}
-                        className={
-                          isOverdue
-                            ? 'week-event week-event-overdue'
-                            : 'week-event'
-                        }
-                      >
-                        <span>{task.time || 'Bez godziny'}</span>
-                        <strong>{task.title}</strong>
-                        <small>
-                          {task.category} · {task.assignedTo} ·{' '}
-                          {isOverdue ? 'Po terminie' : task.status}
-                        </small>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </article>
-          );
-        })}
+      <div className="calendar-view-tabs">
+        {calendarViewModes.map((mode) => (
+          <button
+            key={mode}
+            className={
+              viewMode === mode ? 'calendar-view-tab active' : 'calendar-view-tab'
+            }
+            onClick={() => setViewMode(mode)}
+          >
+            {mode}
+          </button>
+        ))}
       </div>
+
+      {viewMode !== 'Tydzień' ? (
+        <div className="empty-state">
+          <h3>Widok „{viewMode}”</h3>
+          <p>Ten widok przygotujemy w kolejnym etapie kalendarza.</p>
+        </div>
+      ) : (
+        <div className="week-grid">
+          {weekDays.map((day) => {
+            const dayTasks = tasks.filter((task) => task.date === day.date);
+
+            return (
+              <article key={day.date} className="week-day-card">
+                <div className="week-day-header">
+                  <strong>{day.name}</strong>
+                  <span>{day.date}</span>
+                </div>
+
+                {dayTasks.length === 0 ? (
+                  <p className="week-empty">Brak terminów</p>
+                ) : (
+                  <div className="week-events">
+                    {dayTasks.map((task) => {
+                      const isOverdue = isTaskOverdue(task);
+
+                      return (
+                        <div
+                          key={task.id}
+                          className={
+                            isOverdue
+                              ? 'week-event week-event-overdue'
+                              : 'week-event'
+                          }
+                        >
+                          <span>{task.time || 'Bez godziny'}</span>
+                          <strong>{task.title}</strong>
+                          <small>
+                            {task.category} · {task.assignedTo} ·{' '}
+                            {isOverdue ? 'Po terminie' : task.status}
+                          </small>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }

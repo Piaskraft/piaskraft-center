@@ -630,3 +630,27 @@
 .week-event-overdue span {
   color: #b91c1c;
 }
+.calendar-view-tabs {
+  display: inline-flex;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.calendar-view-tab {
+  border: 0;
+  background: transparent;
+  color: #374151;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.calendar-view-tab.active {
+  background: #ff6600;
+  color: #ffffff;
+}
