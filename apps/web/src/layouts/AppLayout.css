@@ -545,3 +545,88 @@
   border-color: #e5e7eb;
   color: #6b7280;
 }
+.calendar-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(150px, 1fr));
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.week-day-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 16px;
+  min-height: 260px;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.06);
+}
+
+.week-day-header {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.week-day-header strong {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.week-day-header span {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.week-empty {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.week-events {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.week-event {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 14px;
+  padding: 10px;
+}
+
+.week-event span {
+  display: block;
+  color: #c2410c;
+  font-weight: 800;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.week-event strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.week-event small {
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.week-event-overdue {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.week-event-overdue span {
+  color: #b91c1c;
+}

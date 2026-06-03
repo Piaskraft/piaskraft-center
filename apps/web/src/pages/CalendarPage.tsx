@@ -1,52 +1,129 @@
+import { useState } from 'react';
 import { tasks } from '../features/tasks/taskMockData';
 import { isTaskOverdue } from '../features/tasks/taskUtils';
 
-const scheduledTasks = tasks
-  .filter((task) => task.date)
-  .sort((a, b) =>
-    `${a.date} ${a.time || ''}`.localeCompare(`${b.date} ${b.time || ''}`),
-  );
+const weekDayNames = [
+  'Poniedziałek',
+  'Wtorek',
+  'Środa',
+  'Czwartek',
+  'Piątek',
+  'Sobota',
+  'Niedziela',
+];
+
+function formatDate(date: Date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function getMonday(date: Date) {
+  const currentDate = new Date(date);
+  const day = currentDate.getDay();
+  const diff = currentDate.getDate() - day + (day === 0 ? -6 : 1);
+
+  return new Date(currentDate.setDate(diff));
+}
+
+function getWeekDays(date: Date) {
+  const monday = getMonday(date);
+
+  return weekDayNames.map((dayName, index) => {
+    const day = new Date(monday);
+    day.setDate(monday.getDate() + index);
+
+    return {
+      name: dayName,
+      date: formatDate(day),
+    };
+  });
+}
 
 export function CalendarPage() {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const weekDays = getWeekDays(selectedDate);
+
+  function goToPreviousWeek() {
+    setSelectedDate((currentDate) => {
+      const newDate = new Date(currentDate);
+      newDate.setDate(currentDate.getDate() - 7);
+      return newDate;
+    });
+  }
+
+  function goToNextWeek() {
+    setSelectedDate((currentDate) => {
+      const newDate = new Date(currentDate);
+      newDate.setDate(currentDate.getDate() + 7);
+      return newDate;
+    });
+  }
+
+  function goToCurrentWeek() {
+    setSelectedDate(new Date());
+  }
+
   return (
     <section className="calendar-page">
       <div className="page-actions">
         <div>
           <h2>Kalendarz</h2>
-          <p>Najbliższe terminy z zadań.</p>
+          <p>Widok tygodnia z terminami zadań.</p>
+        </div>
+
+        <div className="calendar-actions">
+          <button className="secondary-button" onClick={goToPreviousWeek}>
+            Poprzedni tydzień
+          </button>
+
+          <button className="secondary-button" onClick={goToCurrentWeek}>
+            Ten tydzień
+          </button>
+
+          <button className="secondary-button" onClick={goToNextWeek}>
+            Następny tydzień
+          </button>
         </div>
       </div>
 
-      <div className="calendar-list">
-        {scheduledTasks.map((task) => {
-          const isOverdue = isTaskOverdue(task);
-
-          const calendarStatus = isOverdue ? 'Po terminie' : task.status;
-
-          const itemClassName = [
-            'calendar-item',
-            isOverdue ? 'calendar-item-overdue' : '',
-            task.status === 'Zrobione' ? 'calendar-item-done' : '',
-            task.status === 'Anulowane' ? 'calendar-item-cancelled' : '',
-          ]
-            .filter(Boolean)
-            .join(' ');
+      <div className="week-grid">
+        {weekDays.map((day) => {
+          const dayTasks = tasks.filter((task) => task.date === day.date);
 
           return (
-            <article key={task.id} className={itemClassName}>
-              <div className="calendar-date">
-                <strong>{task.date}</strong>
-                <span>{task.time || 'Bez godziny'}</span>
+            <article key={day.date} className="week-day-card">
+              <div className="week-day-header">
+                <strong>{day.name}</strong>
+                <span>{day.date}</span>
               </div>
 
-              <div className="calendar-content">
-                <h3>{task.title}</h3>
-                <p>
-                  {task.category} · {task.assignedTo} · {task.priority}
-                </p>
-              </div>
+              {dayTasks.length === 0 ? (
+                <p className="week-empty">Brak terminów</p>
+              ) : (
+                <div className="week-events">
+                  {dayTasks.map((task) => {
+                    const isOverdue = isTaskOverdue(task);
 
-              <span className="calendar-status-badge">{calendarStatus}</span>
+                    return (
+                      <div
+                        key={task.id}
+                        className={
+                          isOverdue
+                            ? 'week-event week-event-overdue'
+                            : 'week-event'
+                        }
+                      >
+                        <span>{task.time || 'Bez godziny'}</span>
+                        <strong>{task.title}</strong>
+                        <small>
+                          {task.category} · {task.assignedTo} ·{' '}
+                          {isOverdue ? 'Po terminie' : task.status}
+                        </small>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </article>
           );
         })}
