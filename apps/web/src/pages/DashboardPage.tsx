@@ -1,57 +1,39 @@
 import { tasks } from '../features/tasks/taskMockData';
-import { isTaskOverdue } from '../features/tasks/taskUtils';
+import { getTaskStats } from '../features/tasks/taskStats';
 
 export function DashboardPage() {
-  const today = new Date().toISOString().slice(0, 10);
-
-  const tasksToday = tasks.filter(
-    (task) => task.date === today && task.status !== 'Anulowane',
-  );
-
-  const activeTasks = tasks.filter(
-    (task) => task.status !== 'Zrobione' && task.status !== 'Anulowane',
-  );
-
-  const overdueTasks = tasks.filter((task) => isTaskOverdue(task));
-
-  const urgentTasks = tasks.filter(
-    (task) => task.priority === 'Pilny' && task.status !== 'Anulowane',
-  );
-
-  const doneTasks = tasks.filter((task) => task.status === 'Zrobione');
-
-  const cancelledTasks = tasks.filter((task) => task.status === 'Anulowane');
+  const stats = getTaskStats(tasks);
 
   return (
     <section className="dashboard-grid">
       <div className="dashboard-card">
         <span>Zadania dzisiaj</span>
-        <strong>{tasksToday.length}</strong>
+        <strong>{stats.tasksToday}</strong>
       </div>
 
       <div className="dashboard-card">
         <span>Aktywne zadania</span>
-        <strong>{activeTasks.length}</strong>
+        <strong>{stats.activeTasks}</strong>
       </div>
 
       <div className="dashboard-card">
         <span>Po terminie</span>
-        <strong>{overdueTasks.length}</strong>
+        <strong>{stats.overdueTasks}</strong>
       </div>
 
       <div className="dashboard-card">
         <span>Pilne</span>
-        <strong>{urgentTasks.length}</strong>
+        <strong>{stats.urgentTasks}</strong>
       </div>
 
       <div className="dashboard-card">
         <span>Zrobione</span>
-        <strong>{doneTasks.length}</strong>
+        <strong>{stats.doneTasks}</strong>
       </div>
 
       <div className="dashboard-card">
         <span>Anulowane</span>
-        <strong>{cancelledTasks.length}</strong>
+        <strong>{stats.cancelledTasks}</strong>
       </div>
     </section>
   );
