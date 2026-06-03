@@ -461,3 +461,46 @@
   border-color: #e5e7eb;
   color: #6b7280;
 }
+
+.calendar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.calendar-item {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 20px 24px;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.06);
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.calendar-date {
+  min-width: 140px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 700;
+}
+
+.calendar-date span {
+  font-size: 13px;
+}
+
+.calendar-item h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.calendar-item p {
+  margin: 0;
+  color: #6b7280;
+}

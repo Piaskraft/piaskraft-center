@@ -3,6 +3,7 @@ import { AppLayout } from './layouts/AppLayout';
 import { DashboardPage } from './pages/DashboardPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 import { TasksPage } from './pages/TasksPage';
+import { CalendarPage } from './pages/CalendarPage';
 
 function App() {
   return (
@@ -13,15 +14,7 @@ function App() {
 
          <Route path="zadania" element={<TasksPage />} />
 
-          <Route
-            path="kalendarz"
-            element={
-              <PlaceholderPage
-                title="Kalendarz"
-                description="Terminy, przypomnienia, telefony, spotkania, płatności i sprawy prywatne."
-              />
-            }
-          />
+         <Route path="kalendarz" element={<CalendarPage />} />
 
           <Route
             path="produkty-robocze"
