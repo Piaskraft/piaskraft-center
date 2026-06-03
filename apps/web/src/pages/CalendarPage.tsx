@@ -11,7 +11,8 @@ import {
 } from '../features/calendar/calendarUtils';
 import { tasks } from '../features/tasks/taskMockData';
 import { isTaskOverdue } from '../features/tasks/taskUtils';
-import { WeekCalendarView } from '../features/calendar/WeekCalendarView';
+import { WeekCalendarView } from '../features/calendar/WeekCalendarView';import { CalendarListView } from '../features/calendar/CalendarListView';
+
 const scheduledTasks = tasks
   .filter((task) => task.date)
   .sort((a, b) =>
@@ -115,40 +116,8 @@ export function CalendarPage() {
         ))}
       </div>
 
-      {viewMode === 'Lista' && (
-        <div className="calendar-list-view">
-          {scheduledTasks.map((task) => {
-            const isOverdue = isTaskOverdue(task);
-            const statusLabel = getCalendarStatusLabel(task);
-
-            return (
-              <article
-                key={task.id}
-                className={
-                  isOverdue
-                    ? 'calendar-list-event calendar-list-event-overdue'
-                    : 'calendar-list-event'
-                }
-              >
-                <div className="calendar-list-date">
-                  <strong>{task.date}</strong>
-                  <span>{task.time || 'Bez godziny'}</span>
-                </div>
-
-                <div className="calendar-list-content">
-                  <h3>{task.title}</h3>
-                  <p>
-                    {task.category} · {task.assignedTo} · {task.priority}
-                  </p>
-                </div>
-
-                <span className="calendar-status-badge">{statusLabel}</span>
-              </article>
-            );
-          })}
-        </div>
-      )}
-
+     {viewMode === 'Lista' && <CalendarListView tasks={scheduledTasks} />}
+     
       {viewMode === 'Dzień' && (
         <div className="day-view">
           <div className="day-view-header">
