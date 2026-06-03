@@ -21,6 +21,12 @@ const weekDayNames = [
   'Niedziela',
 ];
 
+const scheduledTasks = tasks
+  .filter((task) => task.date)
+  .sort((a, b) =>
+    `${a.date} ${a.time || ''}`.localeCompare(`${b.date} ${b.time || ''}`),
+  );
+
 function formatDate(date: Date) {
   return date.toISOString().slice(0, 10);
 }
@@ -45,6 +51,11 @@ function getWeekDays(date: Date) {
       date: formatDate(day),
     };
   });
+}
+
+function getCalendarStatusLabel(task: (typeof tasks)[number]) {
+  if (isTaskOverdue(task)) return 'Po terminie';
+  return task.status;
 }
 
 export function CalendarPage() {
@@ -110,12 +121,48 @@ export function CalendarPage() {
         ))}
       </div>
 
-      {viewMode !== 'Tydzień' ? (
+      {viewMode === 'Lista' && (
+        <div className="calendar-list-view">
+          {scheduledTasks.map((task) => {
+            const isOverdue = isTaskOverdue(task);
+            const statusLabel = getCalendarStatusLabel(task);
+
+            return (
+              <article
+                key={task.id}
+                className={
+                  isOverdue
+                    ? 'calendar-list-event calendar-list-event-overdue'
+                    : 'calendar-list-event'
+                }
+              >
+                <div className="calendar-list-date">
+                  <strong>{task.date}</strong>
+                  <span>{task.time || 'Bez godziny'}</span>
+                </div>
+
+                <div className="calendar-list-content">
+                  <h3>{task.title}</h3>
+                  <p>
+                    {task.category} · {task.assignedTo} · {task.priority}
+                  </p>
+                </div>
+
+                <span className="calendar-status-badge">{statusLabel}</span>
+              </article>
+            );
+          })}
+        </div>
+      )}
+
+      {viewMode !== 'Tydzień' && viewMode !== 'Lista' && (
         <div className="empty-state">
           <h3>Widok „{viewMode}”</h3>
           <p>Ten widok przygotujemy w kolejnym etapie kalendarza.</p>
         </div>
-      ) : (
+      )}
+
+      {viewMode === 'Tydzień' && (
         <div className="week-grid">
           {weekDays.map((day) => {
             const dayTasks = tasks.filter((task) => task.date === day.date);
@@ -147,7 +194,7 @@ export function CalendarPage() {
                           <strong>{task.title}</strong>
                           <small>
                             {task.category} · {task.assignedTo} ·{' '}
-                            {isOverdue ? 'Po terminie' : task.status}
+                            {getCalendarStatusLabel(task)}
                           </small>
                         </div>
                       );
