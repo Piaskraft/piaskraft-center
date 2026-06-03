@@ -53,6 +53,27 @@ function getWeekDays(date: Date) {
   });
 }
 
+function getMonthDays(date: Date) {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+
+  const days = [];
+
+  for (let day = 1; day <= lastDay.getDate(); day++) {
+    const currentDate = new Date(year, month, day);
+
+    days.push({
+      dayNumber: day,
+      date: formatDate(currentDate),
+    });
+  }
+
+  return days;
+}
+
 function getCalendarStatusLabel(task: (typeof tasks)[number]) {
   if (isTaskOverdue(task)) return 'Po terminie';
   return task.status;
@@ -87,6 +108,7 @@ export function CalendarPage() {
   const [viewMode, setViewMode] = useState<CalendarViewMode>('Tydzień');
 
   const weekDays = getWeekDays(selectedDate);
+  const monthDays = getMonthDays(selectedDate);
   const navigationLabels = getNavigationLabels(viewMode);
 
   function goToPreviousPeriod() {
@@ -257,11 +279,25 @@ export function CalendarPage() {
       )}
 
       {viewMode === 'Miesiąc' && (
-        <div className="empty-state">
-          <h3>Widok „Miesiąc”</h3>
-          <p>Ten widok przygotujemy w kolejnym etapie kalendarza.</p>
-        </div>
-      )}
+  <div className="month-grid">
+    {monthDays.map((day) => {
+      const dayTasks = tasks.filter((task) => task.date === day.date);
+
+      return (
+        <article key={day.date} className="month-day-card">
+          <div className="month-day-number">{day.dayNumber}</div>
+          <div className="month-day-date">{day.date}</div>
+
+          {dayTasks.length === 0 ? (
+            <p>Brak terminów</p>
+          ) : (
+            <strong>{dayTasks.length} termin</strong>
+          )}
+        </article>
+      );
+    })}
+  </div>
+)}
 
       {viewMode === 'Tydzień' && (
         <div className="week-grid">
