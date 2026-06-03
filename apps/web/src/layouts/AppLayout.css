@@ -439,3 +439,11 @@
   border-color: #fecaca !important;
   color: #b91c1c !important;
 }
+.danger-text-button {
+  border: 0;
+  background: transparent;
+  color: #b91c1c;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}

@@ -77,6 +77,9 @@ export function TasksPage() {
       ),
     );
   }
+  function handleCancelTask(taskId: number) {
+  handleChangeTaskStatus(taskId, 'Anulowane');
+}
 
   const filteredTasks = tasks.filter((task) => {
     if (activeFilter === 'Wszystkie') return true;
@@ -139,12 +142,13 @@ Pilne: tasks.filter((task) => task.priority === 'Pilny').length,
 ) : (
   <div className="tasks-list">
     {filteredTasks.map((task) => (
-      <TaskCard
+  <TaskCard
   key={task.id}
   task={task}
   taskStatuses={taskStatuses}
   onChangeStatus={handleChangeTaskStatus}
   onAddComment={handleAddTaskComment}
+  onCancelTask={handleCancelTask}
 />
     ))}
   </div>

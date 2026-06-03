@@ -7,6 +7,7 @@ type TaskCardProps = {
   taskStatuses: TaskStatus[];
   onChangeStatus: (taskId: number, status: TaskStatus) => void;
   onAddComment: (taskId: number, content: string) => void;
+  onCancelTask: (taskId: number) => void;
 };
 
 export function TaskCard({
@@ -14,6 +15,7 @@ export function TaskCard({
   taskStatuses,
   onChangeStatus,
   onAddComment,
+  onCancelTask,
 }: TaskCardProps) {
   const [isDetailsVisible, setIsDetailsVisible] = useState(false);
   const [isCommentFormVisible, setIsCommentFormVisible] = useState(false);
@@ -79,6 +81,15 @@ const isOverdue = isTaskOverdue(task);
         )}
 
         <div className="task-actions">
+          {task.status !== 'Anulowane' && task.status !== 'Zrobione' && (
+  <button
+    type="button"
+    className="danger-text-button"
+    onClick={() => onCancelTask(task.id)}
+  >
+    Anuluj zadanie
+  </button>
+)}
           <button
             type="button"
             className="text-button"
