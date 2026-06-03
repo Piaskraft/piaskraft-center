@@ -30,6 +30,11 @@ const scheduledTasks = tasks
 function formatDate(date: Date) {
   return date.toISOString().slice(0, 10);
 }
+function createDateFromDateString(dateString: string) {
+  const [year, month, day] = dateString.split('-').map(Number);
+
+  return new Date(year, month - 1, day);
+}
 
 function getMonday(date: Date) {
   const currentDate = new Date(date);
@@ -154,6 +159,12 @@ const navigationLabels = getNavigationLabels(viewMode);
   function goToCurrentPeriod() {
     setSelectedDate(new Date());
   }
+
+  function handleSelectMonthDay(dateString: string) {
+  setSelectedDate(createDateFromDateString(dateString));
+  setViewMode('Dzień');
+}
+
 
   return (
     <section className="calendar-page">
@@ -284,13 +295,14 @@ const navigationLabels = getNavigationLabels(viewMode);
       const dayTasks = tasks.filter((task) => task.date === day.date);
 
       return (
-        <article
+    <article
   key={day.date}
   className={
     day.date === today
       ? 'month-day-card month-day-card-today'
       : 'month-day-card'
   }
+  onClick={() => handleSelectMonthDay(day.date)}
 >
           <div className="month-day-number">{day.dayNumber}</div>
           <div className="month-day-date">{day.date}</div>

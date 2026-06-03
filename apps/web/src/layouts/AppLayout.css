@@ -836,3 +836,12 @@
   font-size: 12px;
   font-weight: 800;
 }
+.month-day-card {
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.month-day-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+}
