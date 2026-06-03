@@ -15,7 +15,8 @@ export type TaskFilter =
   | 'Operator'
   | 'Oboje'
   | 'Pilne'
-  | 'Zrobione';
+  | 'Zrobione'
+  | 'Anulowane';
 
 export const taskFilters: TaskFilter[] = [
   'Wszystkie',
@@ -24,4 +25,5 @@ export const taskFilters: TaskFilter[] = [
   'Oboje',
   'Pilne',
   'Zrobione',
+  'Anulowane',
 ];

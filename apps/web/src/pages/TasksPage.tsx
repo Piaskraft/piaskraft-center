@@ -88,6 +88,7 @@ export function TasksPage() {
 if (activeFilter === 'Oboje') return task.assignedTo === 'Oboje';
 if (activeFilter === 'Pilne') return task.priority === 'Pilny';
     if (activeFilter === 'Zrobione') return task.status === 'Zrobione';
+    if (activeFilter === 'Anulowane') return task.status === 'Anulowane';
 
     return true;
   });
@@ -99,6 +100,7 @@ const taskFilterCounts: Record<TaskFilter, number> = {
 Oboje: tasks.filter((task) => task.assignedTo === 'Oboje').length,
 Pilne: tasks.filter((task) => task.priority === 'Pilny').length,
   Zrobione: tasks.filter((task) => task.status === 'Zrobione').length,
+  Anulowane: tasks.filter((task) => task.status === 'Anulowane').length,
 };
 
   return (
