@@ -1,25 +1,16 @@
 import { useState } from 'react';
+import {
+  calendarViewModes,
+  createDateFromDateString,
+  formatDate,
+  getCalendarStatusLabel,
+  getMonthDays,
+  getNavigationLabels,
+  getWeekDays,
+  type CalendarViewMode,
+} from '../features/calendar/calendarUtils';
 import { tasks } from '../features/tasks/taskMockData';
 import { isTaskOverdue } from '../features/tasks/taskUtils';
-
-type CalendarViewMode = 'Dzień' | 'Tydzień' | 'Miesiąc' | 'Lista';
-
-const calendarViewModes: CalendarViewMode[] = [
-  'Dzień',
-  'Tydzień',
-  'Miesiąc',
-  'Lista',
-];
-
-const weekDayNames = [
-  'Poniedziałek',
-  'Wtorek',
-  'Środa',
-  'Czwartek',
-  'Piątek',
-  'Sobota',
-  'Niedziela',
-];
 
 const scheduledTasks = tasks
   .filter((task) => task.date)
@@ -27,94 +18,14 @@ const scheduledTasks = tasks
     `${a.date} ${a.time || ''}`.localeCompare(`${b.date} ${b.time || ''}`),
   );
 
-function formatDate(date: Date) {
-  return date.toISOString().slice(0, 10);
-}
-function createDateFromDateString(dateString: string) {
-  const [year, month, day] = dateString.split('-').map(Number);
-
-  return new Date(year, month - 1, day);
-}
-
-function getMonday(date: Date) {
-  const currentDate = new Date(date);
-  const day = currentDate.getDay();
-  const diff = currentDate.getDate() - day + (day === 0 ? -6 : 1);
-
-  return new Date(currentDate.setDate(diff));
-}
-
-function getWeekDays(date: Date) {
-  const monday = getMonday(date);
-
-  return weekDayNames.map((dayName, index) => {
-    const day = new Date(monday);
-    day.setDate(monday.getDate() + index);
-
-    return {
-      name: dayName,
-      date: formatDate(day),
-    };
-  });
-}
-
-function getMonthDays(date: Date) {
-  const year = date.getFullYear();
-  const month = date.getMonth();
-
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-
-  const days = [];
-
-  for (let day = 1; day <= lastDay.getDate(); day++) {
-    const currentDate = new Date(year, month, day);
-
-    days.push({
-      dayNumber: day,
-      date: formatDate(currentDate),
-    });
-  }
-
-  return days;
-}
-
-function getCalendarStatusLabel(task: (typeof tasks)[number]) {
-  if (isTaskOverdue(task)) return 'Po terminie';
-  return task.status;
-}
-
-function getNavigationLabels(viewMode: CalendarViewMode) {
-  if (viewMode === 'Dzień') {
-    return {
-      previous: 'Poprzedni dzień',
-      current: 'Dzisiaj',
-      next: 'Następny dzień',
-    };
-  }
-
-  if (viewMode === 'Miesiąc') {
-    return {
-      previous: 'Poprzedni miesiąc',
-      current: 'Ten miesiąc',
-      next: 'Następny miesiąc',
-    };
-  }
-
-  return {
-    previous: 'Poprzedni tydzień',
-    current: 'Ten tydzień',
-    next: 'Następny tydzień',
-  };
-}
-
 export function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<CalendarViewMode>('Tydzień');
-const weekDays = getWeekDays(selectedDate);
-const monthDays = getMonthDays(selectedDate);
-const today = formatDate(new Date());
-const navigationLabels = getNavigationLabels(viewMode);
+
+  const weekDays = getWeekDays(selectedDate);
+  const monthDays = getMonthDays(selectedDate);
+  const today = formatDate(new Date());
+  const navigationLabels = getNavigationLabels(viewMode);
 
   function goToPreviousPeriod() {
     setSelectedDate((currentDate) => {
@@ -161,10 +72,9 @@ const navigationLabels = getNavigationLabels(viewMode);
   }
 
   function handleSelectMonthDay(dateString: string) {
-  setSelectedDate(createDateFromDateString(dateString));
-  setViewMode('Dzień');
-}
-
+    setSelectedDate(createDateFromDateString(dateString));
+    setViewMode('Dzień');
+  }
 
   return (
     <section className="calendar-page">
@@ -290,33 +200,33 @@ const navigationLabels = getNavigationLabels(viewMode);
       )}
 
       {viewMode === 'Miesiąc' && (
-  <div className="month-grid">
-    {monthDays.map((day) => {
-      const dayTasks = tasks.filter((task) => task.date === day.date);
+        <div className="month-grid">
+          {monthDays.map((day) => {
+            const dayTasks = tasks.filter((task) => task.date === day.date);
 
-      return (
-    <article
-  key={day.date}
-  className={
-    day.date === today
-      ? 'month-day-card month-day-card-today'
-      : 'month-day-card'
-  }
-  onClick={() => handleSelectMonthDay(day.date)}
->
-          <div className="month-day-number">{day.dayNumber}</div>
-          <div className="month-day-date">{day.date}</div>
+            return (
+              <article
+                key={day.date}
+                className={
+                  day.date === today
+                    ? 'month-day-card month-day-card-today'
+                    : 'month-day-card'
+                }
+                onClick={() => handleSelectMonthDay(day.date)}
+              >
+                <div className="month-day-number">{day.dayNumber}</div>
+                <div className="month-day-date">{day.date}</div>
 
-          {dayTasks.length === 0 ? (
-            <p>Brak terminów</p>
-          ) : (
-            <strong>{dayTasks.length} termin</strong>
-          )}
-        </article>
-      );
-    })}
-  </div>
-)}
+                {dayTasks.length === 0 ? (
+                  <p>Brak terminów</p>
+                ) : (
+                  <strong>{dayTasks.length} termin</strong>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      )}
 
       {viewMode === 'Tydzień' && (
         <div className="week-grid">
