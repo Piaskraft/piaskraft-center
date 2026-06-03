@@ -58,29 +58,78 @@ function getCalendarStatusLabel(task: (typeof tasks)[number]) {
   return task.status;
 }
 
+function getNavigationLabels(viewMode: CalendarViewMode) {
+  if (viewMode === 'Dzień') {
+    return {
+      previous: 'Poprzedni dzień',
+      current: 'Dzisiaj',
+      next: 'Następny dzień',
+    };
+  }
+
+  if (viewMode === 'Miesiąc') {
+    return {
+      previous: 'Poprzedni miesiąc',
+      current: 'Ten miesiąc',
+      next: 'Następny miesiąc',
+    };
+  }
+
+  return {
+    previous: 'Poprzedni tydzień',
+    current: 'Ten tydzień',
+    next: 'Następny tydzień',
+  };
+}
+
 export function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<CalendarViewMode>('Tydzień');
 
   const weekDays = getWeekDays(selectedDate);
+  const navigationLabels = getNavigationLabels(viewMode);
 
-  function goToPreviousWeek() {
+  function goToPreviousPeriod() {
     setSelectedDate((currentDate) => {
       const newDate = new Date(currentDate);
-      newDate.setDate(currentDate.getDate() - 7);
+
+      if (viewMode === 'Dzień') {
+        newDate.setDate(currentDate.getDate() - 1);
+      }
+
+      if (viewMode === 'Tydzień') {
+        newDate.setDate(currentDate.getDate() - 7);
+      }
+
+      if (viewMode === 'Miesiąc') {
+        newDate.setMonth(currentDate.getMonth() - 1);
+      }
+
       return newDate;
     });
   }
 
-  function goToNextWeek() {
+  function goToNextPeriod() {
     setSelectedDate((currentDate) => {
       const newDate = new Date(currentDate);
-      newDate.setDate(currentDate.getDate() + 7);
+
+      if (viewMode === 'Dzień') {
+        newDate.setDate(currentDate.getDate() + 1);
+      }
+
+      if (viewMode === 'Tydzień') {
+        newDate.setDate(currentDate.getDate() + 7);
+      }
+
+      if (viewMode === 'Miesiąc') {
+        newDate.setMonth(currentDate.getMonth() + 1);
+      }
+
       return newDate;
     });
   }
 
-  function goToCurrentWeek() {
+  function goToCurrentPeriod() {
     setSelectedDate(new Date());
   }
 
@@ -92,19 +141,21 @@ export function CalendarPage() {
           <p>Widok czasu: dzień, tydzień, miesiąc i lista terminów.</p>
         </div>
 
-        <div className="calendar-actions">
-          <button className="secondary-button" onClick={goToPreviousWeek}>
-            Poprzedni tydzień
-          </button>
+        {viewMode !== 'Lista' && (
+          <div className="calendar-actions">
+            <button className="secondary-button" onClick={goToPreviousPeriod}>
+              {navigationLabels.previous}
+            </button>
 
-          <button className="secondary-button" onClick={goToCurrentWeek}>
-            Ten tydzień
-          </button>
+            <button className="secondary-button" onClick={goToCurrentPeriod}>
+              {navigationLabels.current}
+            </button>
 
-          <button className="secondary-button" onClick={goToNextWeek}>
-            Następny tydzień
-          </button>
-        </div>
+            <button className="secondary-button" onClick={goToNextPeriod}>
+              {navigationLabels.next}
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="calendar-view-tabs">
@@ -156,62 +207,61 @@ export function CalendarPage() {
       )}
 
       {viewMode === 'Dzień' && (
-  <div className="day-view">
-    <div className="day-view-header">
-      <h3>{formatDate(selectedDate)}</h3>
-      <p>Terminy wybranego dnia.</p>
-    </div>
+        <div className="day-view">
+          <div className="day-view-header">
+            <h3>{formatDate(selectedDate)}</h3>
+            <p>Terminy wybranego dnia.</p>
+          </div>
 
-    {tasks.filter((task) => task.date === formatDate(selectedDate)).length === 0 ? (
-      <div className="empty-state">
-        <h3>Brak terminów</h3>
-        <p>Na ten dzień nie ma żadnych zaplanowanych zadań.</p>
-      </div>
-    ) : (
-      <div className="day-events">
-        {tasks
-          .filter((task) => task.date === formatDate(selectedDate))
-          .sort((a, b) => (a.time || '').localeCompare(b.time || ''))
-          .map((task) => {
-            const isOverdue = isTaskOverdue(task);
+          {tasks.filter((task) => task.date === formatDate(selectedDate))
+            .length === 0 ? (
+            <div className="empty-state">
+              <h3>Brak terminów</h3>
+              <p>Na ten dzień nie ma żadnych zaplanowanych zadań.</p>
+            </div>
+          ) : (
+            <div className="day-events">
+              {tasks
+                .filter((task) => task.date === formatDate(selectedDate))
+                .sort((a, b) => (a.time || '').localeCompare(b.time || ''))
+                .map((task) => {
+                  const isOverdue = isTaskOverdue(task);
 
-            return (
-              <article
-                key={task.id}
-                className={
-                  isOverdue
-                    ? 'day-event day-event-overdue'
-                    : 'day-event'
-                }
-              >
-                <div className="day-event-time">
-                  {task.time || 'Bez godziny'}
-                </div>
+                  return (
+                    <article
+                      key={task.id}
+                      className={
+                        isOverdue ? 'day-event day-event-overdue' : 'day-event'
+                      }
+                    >
+                      <div className="day-event-time">
+                        {task.time || 'Bez godziny'}
+                      </div>
 
-                <div className="day-event-content">
-                  <h3>{task.title}</h3>
-                  <p>
-                    {task.category} · {task.assignedTo} · {task.priority}
-                  </p>
-                </div>
+                      <div className="day-event-content">
+                        <h3>{task.title}</h3>
+                        <p>
+                          {task.category} · {task.assignedTo} · {task.priority}
+                        </p>
+                      </div>
 
-                <span className="calendar-status-badge">
-                  {getCalendarStatusLabel(task)}
-                </span>
-              </article>
-            );
-          })}
-      </div>
-    )}
-  </div>
-)}
+                      <span className="calendar-status-badge">
+                        {getCalendarStatusLabel(task)}
+                      </span>
+                    </article>
+                  );
+                })}
+            </div>
+          )}
+        </div>
+      )}
 
-{viewMode === 'Miesiąc' && (
-  <div className="empty-state">
-    <h3>Widok „Miesiąc”</h3>
-    <p>Ten widok przygotujemy w kolejnym etapie kalendarza.</p>
-  </div>
-)}
+      {viewMode === 'Miesiąc' && (
+        <div className="empty-state">
+          <h3>Widok „Miesiąc”</h3>
+          <p>Ten widok przygotujemy w kolejnym etapie kalendarza.</p>
+        </div>
+      )}
 
       {viewMode === 'Tydzień' && (
         <div className="week-grid">
