@@ -447,3 +447,17 @@
   cursor: pointer;
   padding: 0;
 }
+.task-card-cancelled {
+  opacity: 0.65;
+}
+
+.task-card-cancelled h3 {
+  text-decoration: line-through;
+}
+
+.task-card-cancelled .task-meta span,
+.task-card-cancelled .status-select {
+  background: #f3f4f6;
+  border-color: #e5e7eb;
+  color: #6b7280;
+}

@@ -36,8 +36,12 @@ const isOverdue = isTaskOverdue(task);
     setIsDetailsVisible(true);
   }
 
-  return (
-    <article className="task-card">
+return (
+  <article
+    className={
+      task.status === 'Anulowane' ? 'task-card task-card-cancelled' : 'task-card'
+    }
+  >
       <div className="task-main">
         <h3>{task.title}</h3>
 
