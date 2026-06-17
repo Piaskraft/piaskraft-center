@@ -3,15 +3,15 @@ import {
   calendarViewModes,
   createDateFromDateString,
   formatDate,
-  getCalendarStatusLabel,
   getMonthDays,
   getNavigationLabels,
   getWeekDays,
   type CalendarViewMode,
 } from '../features/calendar/calendarUtils';
+import { CalendarListView } from '../features/calendar/CalendarListView';
+import { DayCalendarView } from '../features/calendar/DayCalendarView';
+import { WeekCalendarView } from '../features/calendar/WeekCalendarView';
 import { tasks } from '../features/tasks/taskMockData';
-import { isTaskOverdue } from '../features/tasks/taskUtils';
-import { WeekCalendarView } from '../features/calendar/WeekCalendarView';import { CalendarListView } from '../features/calendar/CalendarListView';
 
 const scheduledTasks = tasks
   .filter((task) => task.date)
@@ -107,7 +107,9 @@ export function CalendarPage() {
           <button
             key={mode}
             className={
-              viewMode === mode ? 'calendar-view-tab active' : 'calendar-view-tab'
+              viewMode === mode
+                ? 'calendar-view-tab active'
+                : 'calendar-view-tab'
             }
             onClick={() => setViewMode(mode)}
           >
@@ -116,56 +118,10 @@ export function CalendarPage() {
         ))}
       </div>
 
-     {viewMode === 'Lista' && <CalendarListView tasks={scheduledTasks} />}
-     
+      {viewMode === 'Lista' && <CalendarListView tasks={scheduledTasks} />}
+
       {viewMode === 'Dzień' && (
-        <div className="day-view">
-          <div className="day-view-header">
-            <h3>{formatDate(selectedDate)}</h3>
-            <p>Terminy wybranego dnia.</p>
-          </div>
-
-          {tasks.filter((task) => task.date === formatDate(selectedDate))
-            .length === 0 ? (
-            <div className="empty-state">
-              <h3>Brak terminów</h3>
-              <p>Na ten dzień nie ma żadnych zaplanowanych zadań.</p>
-            </div>
-          ) : (
-            <div className="day-events">
-              {tasks
-                .filter((task) => task.date === formatDate(selectedDate))
-                .sort((a, b) => (a.time || '').localeCompare(b.time || ''))
-                .map((task) => {
-                  const isOverdue = isTaskOverdue(task);
-
-                  return (
-                    <article
-                      key={task.id}
-                      className={
-                        isOverdue ? 'day-event day-event-overdue' : 'day-event'
-                      }
-                    >
-                      <div className="day-event-time">
-                        {task.time || 'Bez godziny'}
-                      </div>
-
-                      <div className="day-event-content">
-                        <h3>{task.title}</h3>
-                        <p>
-                          {task.category} · {task.assignedTo} · {task.priority}
-                        </p>
-                      </div>
-
-                      <span className="calendar-status-badge">
-                        {getCalendarStatusLabel(task)}
-                      </span>
-                    </article>
-                  );
-                })}
-            </div>
-          )}
-        </div>
+        <DayCalendarView selectedDate={selectedDate} tasks={tasks} />
       )}
 
       {viewMode === 'Miesiąc' && (
@@ -197,11 +153,9 @@ export function CalendarPage() {
         </div>
       )}
 
-   
-
-           {viewMode === 'Tydzień' && (
-  <WeekCalendarView weekDays={weekDays} tasks={tasks} />
-)}
+      {viewMode === 'Tydzień' && (
+        <WeekCalendarView weekDays={weekDays} tasks={tasks} />
+      )}
     </section>
   );
 }
