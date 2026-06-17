@@ -10,6 +10,7 @@ import {
 } from '../features/calendar/calendarUtils';
 import { CalendarListView } from '../features/calendar/CalendarListView';
 import { DayCalendarView } from '../features/calendar/DayCalendarView';
+import { MonthCalendarView } from '../features/calendar/MonthCalendarView';
 import { WeekCalendarView } from '../features/calendar/WeekCalendarView';
 import { tasks } from '../features/tasks/taskMockData';
 
@@ -124,34 +125,14 @@ export function CalendarPage() {
         <DayCalendarView selectedDate={selectedDate} tasks={tasks} />
       )}
 
-      {viewMode === 'Miesiąc' && (
-        <div className="month-grid">
-          {monthDays.map((day) => {
-            const dayTasks = tasks.filter((task) => task.date === day.date);
-
-            return (
-              <article
-                key={day.date}
-                className={
-                  day.date === today
-                    ? 'month-day-card month-day-card-today'
-                    : 'month-day-card'
-                }
-                onClick={() => handleSelectMonthDay(day.date)}
-              >
-                <div className="month-day-number">{day.dayNumber}</div>
-                <div className="month-day-date">{day.date}</div>
-
-                {dayTasks.length === 0 ? (
-                  <p>Brak terminów</p>
-                ) : (
-                  <strong>{dayTasks.length} termin</strong>
-                )}
-              </article>
-            );
-          })}
-        </div>
-      )}
+  {viewMode === 'Miesiąc' && (
+  <MonthCalendarView
+    monthDays={monthDays}
+    tasks={tasks}
+    today={today}
+    onSelectDay={handleSelectMonthDay}
+  />
+)}
 
       {viewMode === 'Tydzień' && (
         <WeekCalendarView weekDays={weekDays} tasks={tasks} />
