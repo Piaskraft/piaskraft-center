@@ -1,31 +1,34 @@
-import type { Task } from '../tasks/taskTypes';
-import { isTaskOverdue } from '../tasks/taskUtils';
+import type { Task } from "../tasks/taskTypes";
+import { isTaskOverdue } from "../tasks/taskUtils";
 
-export type CalendarViewMode = 'Dzień' | 'Tydzień' | 'Miesiąc' | 'Lista';
+export type CalendarViewMode = "Dzień" | "Tydzień" | "Miesiąc" | "Lista";
 
 export const calendarViewModes: CalendarViewMode[] = [
-  'Dzień',
-  'Tydzień',
-  'Miesiąc',
-  'Lista',
+  "Dzień",
+  "Tydzień",
+  "Miesiąc",
+  "Lista",
 ];
 
 const weekDayNames = [
-  'Poniedziałek',
-  'Wtorek',
-  'Środa',
-  'Czwartek',
-  'Piątek',
-  'Sobota',
-  'Niedziela',
+  "Poniedziałek",
+  "Wtorek",
+  "Środa",
+  "Czwartek",
+  "Piątek",
+  "Sobota",
+  "Niedziela",
 ];
 
 export function formatDate(date: Date) {
-  return date.toISOString().slice(0, 10);
-}
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
 
+  return `${year}-${month}-${day}`;
+}
 export function createDateFromDateString(dateString: string) {
-  const [year, month, day] = dateString.split('-').map(Number);
+  const [year, month, day] = dateString.split("-").map(Number);
 
   return new Date(year, month - 1, day);
 }
@@ -72,31 +75,31 @@ export function getMonthDays(date: Date) {
 }
 
 export function getCalendarStatusLabel(task: Task) {
-  if (isTaskOverdue(task)) return 'Po terminie';
+  if (isTaskOverdue(task)) return "Po terminie";
 
   return task.status;
 }
 
 export function getNavigationLabels(viewMode: CalendarViewMode) {
-  if (viewMode === 'Dzień') {
+  if (viewMode === "Dzień") {
     return {
-      previous: 'Poprzedni dzień',
-      current: 'Dzisiaj',
-      next: 'Następny dzień',
+      previous: "Poprzedni dzień",
+      current: "Dzisiaj",
+      next: "Następny dzień",
     };
   }
 
-  if (viewMode === 'Miesiąc') {
+  if (viewMode === "Miesiąc") {
     return {
-      previous: 'Poprzedni miesiąc',
-      current: 'Ten miesiąc',
-      next: 'Następny miesiąc',
+      previous: "Poprzedni miesiąc",
+      current: "Ten miesiąc",
+      next: "Następny miesiąc",
     };
   }
 
   return {
-    previous: 'Poprzedni tydzień',
-    current: 'Ten tydzień',
-    next: 'Następny tydzień',
+    previous: "Poprzedni tydzień",
+    current: "Ten tydzień",
+    next: "Następny tydzień",
   };
 }
