@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   calendarViewModes,
   createDateFromDateString,
@@ -7,62 +7,42 @@ import {
   getNavigationLabels,
   getWeekDays,
   type CalendarViewMode,
-} from '../features/calendar/calendarUtils';
-import { CalendarListView } from '../features/calendar/CalendarListView';
-import { DayCalendarView } from '../features/calendar/DayCalendarView';
-import { MonthCalendarView } from '../features/calendar/MonthCalendarView';
-import { WeekCalendarView } from '../features/calendar/WeekCalendarView';
-import { tasks } from '../features/tasks/taskMockData';
+} from "../features/calendar/calendarUtils";
+import { CalendarListView } from "../features/calendar/CalendarListView";
+import { DayCalendarView } from "../features/calendar/DayCalendarView";
+import { MonthCalendarView } from "../features/calendar/MonthCalendarView";
+import { WeekCalendarView } from "../features/calendar/WeekCalendarView";
+import { tasks } from "../features/tasks/taskMockData";
 
 const scheduledTasks = tasks
   .filter((task) => task.date)
   .sort((a, b) =>
-    `${a.date} ${a.time || ''}`.localeCompare(`${b.date} ${b.time || ''}`),
+    `${a.date} ${a.time || ""}`.localeCompare(`${b.date} ${b.time || ""}`),
   );
 
 export function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState<CalendarViewMode>('Tydzień');
+  const [viewMode, setViewMode] = useState<CalendarViewMode>("Tydzień");
 
+  const today = formatDate(new Date());
   const weekDays = getWeekDays(selectedDate);
   const monthDays = getMonthDays(selectedDate);
-  const today = formatDate(new Date());
   const navigationLabels = getNavigationLabels(viewMode);
 
-  function goToPreviousPeriod() {
+  function changePeriod(direction: -1 | 1) {
     setSelectedDate((currentDate) => {
       const newDate = new Date(currentDate);
 
-      if (viewMode === 'Dzień') {
-        newDate.setDate(currentDate.getDate() - 1);
+      if (viewMode === "Dzień") {
+        newDate.setDate(currentDate.getDate() + direction);
       }
 
-      if (viewMode === 'Tydzień') {
-        newDate.setDate(currentDate.getDate() - 7);
+      if (viewMode === "Tydzień") {
+        newDate.setDate(currentDate.getDate() + direction * 7);
       }
 
-      if (viewMode === 'Miesiąc') {
-        newDate.setMonth(currentDate.getMonth() - 1);
-      }
-
-      return newDate;
-    });
-  }
-
-  function goToNextPeriod() {
-    setSelectedDate((currentDate) => {
-      const newDate = new Date(currentDate);
-
-      if (viewMode === 'Dzień') {
-        newDate.setDate(currentDate.getDate() + 1);
-      }
-
-      if (viewMode === 'Tydzień') {
-        newDate.setDate(currentDate.getDate() + 7);
-      }
-
-      if (viewMode === 'Miesiąc') {
-        newDate.setMonth(currentDate.getMonth() + 1);
+      if (viewMode === "Miesiąc") {
+        newDate.setMonth(currentDate.getMonth() + direction);
       }
 
       return newDate;
@@ -75,7 +55,7 @@ export function CalendarPage() {
 
   function handleSelectMonthDay(dateString: string) {
     setSelectedDate(createDateFromDateString(dateString));
-    setViewMode('Dzień');
+    setViewMode("Dzień");
   }
 
   return (
@@ -86,9 +66,12 @@ export function CalendarPage() {
           <p>Widok czasu: dzień, tydzień, miesiąc i lista terminów.</p>
         </div>
 
-        {viewMode !== 'Lista' && (
+        {viewMode !== "Lista" && (
           <div className="calendar-actions">
-            <button className="secondary-button" onClick={goToPreviousPeriod}>
+            <button
+              className="secondary-button"
+              onClick={() => changePeriod(-1)}
+            >
               {navigationLabels.previous}
             </button>
 
@@ -96,7 +79,10 @@ export function CalendarPage() {
               {navigationLabels.current}
             </button>
 
-            <button className="secondary-button" onClick={goToNextPeriod}>
+            <button
+              className="secondary-button"
+              onClick={() => changePeriod(1)}
+            >
               {navigationLabels.next}
             </button>
           </div>
@@ -107,11 +93,7 @@ export function CalendarPage() {
         {calendarViewModes.map((mode) => (
           <button
             key={mode}
-            className={
-              viewMode === mode
-                ? 'calendar-view-tab active'
-                : 'calendar-view-tab'
-            }
+            className={`calendar-view-tab${viewMode === mode ? " active" : ""}`}
             onClick={() => setViewMode(mode)}
           >
             {mode}
@@ -119,23 +101,23 @@ export function CalendarPage() {
         ))}
       </div>
 
-      {viewMode === 'Lista' && <CalendarListView tasks={scheduledTasks} />}
+      {viewMode === "Lista" && <CalendarListView tasks={scheduledTasks} />}
 
-      {viewMode === 'Dzień' && (
+      {viewMode === "Dzień" && (
         <DayCalendarView selectedDate={selectedDate} tasks={tasks} />
       )}
 
-  {viewMode === 'Miesiąc' && (
-  <MonthCalendarView
-    monthDays={monthDays}
-    tasks={tasks}
-    today={today}
-    onSelectDay={handleSelectMonthDay}
-  />
-)}
-
-      {viewMode === 'Tydzień' && (
+      {viewMode === "Tydzień" && (
         <WeekCalendarView weekDays={weekDays} tasks={tasks} />
+      )}
+
+      {viewMode === "Miesiąc" && (
+        <MonthCalendarView
+          monthDays={monthDays}
+          tasks={tasks}
+          today={today}
+          onSelectDay={handleSelectMonthDay}
+        />
       )}
     </section>
   );
