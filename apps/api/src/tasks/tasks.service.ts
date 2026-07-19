@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateTaskCommentDto } from './dto/create-task-comment.dto';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 
@@ -21,6 +22,16 @@ export class TasksService {
       },
       include: {
         comments: true,
+      },
+    });
+  }
+
+  addComment(taskId: number, data: CreateTaskCommentDto) {
+    return this.prisma.taskComment.create({
+      data: {
+        taskId,
+        author: data.author,
+        content: data.content,
       },
     });
   }

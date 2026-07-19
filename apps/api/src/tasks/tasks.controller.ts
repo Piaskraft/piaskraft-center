@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { CreateTaskCommentDto } from './dto/create-task-comment.dto';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { TasksService } from './tasks.service';
@@ -18,6 +19,14 @@ export class TasksController {
   @Post()
   create(@Body() data: CreateTaskDto) {
     return this.tasksService.create(data);
+  }
+
+  @Post(':taskId/comments')
+  addComment(
+    @Param('taskId', ParseIntPipe) taskId: number,
+    @Body() data: CreateTaskCommentDto,
+  ) {
+    return this.tasksService.addComment(taskId, data);
   }
 
   @Patch(':taskId')
