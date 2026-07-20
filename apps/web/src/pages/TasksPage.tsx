@@ -1,18 +1,38 @@
-import { useState } from 'react';
-import { TaskCard } from '../features/tasks/TaskCard';
-import { TaskForm, type NewTaskData } from '../features/tasks/TaskForm';
-import { tasks as initialTasks } from '../features/tasks/taskMockData';
+import { useEffect, useState } from "react";
+import { TaskCard } from "../features/tasks/TaskCard";
+import { TaskForm, type NewTaskData } from "../features/tasks/TaskForm";
+import { getTasks } from "../features/tasks/taskApi";
 import {
   taskFilters,
   taskStatuses,
   type TaskFilter,
-} from '../features/tasks/taskOptions';
-import type { Task, TaskStatus } from '../features/tasks/taskTypes';
+} from "../features/tasks/taskOptions";
+import type { Task, TaskStatus } from "../features/tasks/taskTypes";
 
 export function TasksPage() {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [isFormVisible, setIsFormVisible] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<TaskFilter>('Wszystkie');
+  const [activeFilter, setActiveFilter] = useState<TaskFilter>("Wszystkie");
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    getTasks()
+      .then((tasksFromApi) => {
+        if (!isCancelled) {
+          setTasks(tasksFromApi);
+        }
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setTasks([]);
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
 
   function handleAddTask(newTask: NewTaskData) {
     const today = new Date().toISOString().slice(0, 10);
@@ -24,11 +44,11 @@ export function TasksPage() {
       assignedTo: newTask.assignedTo,
       category: newTask.category,
       priority: newTask.priority,
-      status: 'Nowe',
+      status: "Nowe",
       date: newTask.date,
       time: newTask.time,
       comments: [],
-      createdBy: 'Admin',
+      createdBy: "Admin",
       createdAt: today,
       updatedAt: today,
     };
@@ -38,29 +58,28 @@ export function TasksPage() {
   }
 
   function handleAddTaskComment(taskId: number, content: string) {
-  const today = new Date().toISOString().slice(0, 10);
+    const today = new Date().toISOString().slice(0, 10);
 
-  setTasks((currentTasks) =>
-    currentTasks.map((task) =>
-      task.id === taskId
-        ? {
-            ...task,
-            comments: [
-              ...task.comments,
-              {
-                id: Date.now(),
-                author: 'Admin',
-                content,
-                createdAt: today,
-              },
-            ],
-            updatedAt: today,
-          }
-        : task,
-    ),
-  );
-}
-
+    setTasks((currentTasks) =>
+      currentTasks.map((task) =>
+        task.id === taskId
+          ? {
+              ...task,
+              comments: [
+                ...task.comments,
+                {
+                  id: Date.now(),
+                  author: "Admin",
+                  content,
+                  createdAt: today,
+                },
+              ],
+              updatedAt: today,
+            }
+          : task,
+      ),
+    );
+  }
 
   function handleChangeTaskStatus(taskId: number, status: TaskStatus) {
     const today = new Date().toISOString().slice(0, 10);
@@ -78,30 +97,30 @@ export function TasksPage() {
     );
   }
   function handleCancelTask(taskId: number) {
-  handleChangeTaskStatus(taskId, 'Anulowane');
-}
+    handleChangeTaskStatus(taskId, "Anulowane");
+  }
 
   const filteredTasks = tasks.filter((task) => {
-    if (activeFilter === 'Wszystkie') return true;
-    if (activeFilter === 'Admin') return task.assignedTo === 'Admin';
-   if (activeFilter === 'Operator') return task.assignedTo === 'Operator';
-if (activeFilter === 'Oboje') return task.assignedTo === 'Oboje';
-if (activeFilter === 'Pilne') return task.priority === 'Pilny';
-    if (activeFilter === 'Zrobione') return task.status === 'Zrobione';
-    if (activeFilter === 'Anulowane') return task.status === 'Anulowane';
+    if (activeFilter === "Wszystkie") return true;
+    if (activeFilter === "Admin") return task.assignedTo === "Admin";
+    if (activeFilter === "Operator") return task.assignedTo === "Operator";
+    if (activeFilter === "Oboje") return task.assignedTo === "Oboje";
+    if (activeFilter === "Pilne") return task.priority === "Pilny";
+    if (activeFilter === "Zrobione") return task.status === "Zrobione";
+    if (activeFilter === "Anulowane") return task.status === "Anulowane";
 
     return true;
   });
 
-const taskFilterCounts: Record<TaskFilter, number> = {
-  Wszystkie: tasks.length,
-  Admin: tasks.filter((task) => task.assignedTo === 'Admin').length,
-  Operator: tasks.filter((task) => task.assignedTo === 'Operator').length,
-Oboje: tasks.filter((task) => task.assignedTo === 'Oboje').length,
-Pilne: tasks.filter((task) => task.priority === 'Pilny').length,
-  Zrobione: tasks.filter((task) => task.status === 'Zrobione').length,
-  Anulowane: tasks.filter((task) => task.status === 'Anulowane').length,
-};
+  const taskFilterCounts: Record<TaskFilter, number> = {
+    Wszystkie: tasks.length,
+    Admin: tasks.filter((task) => task.assignedTo === "Admin").length,
+    Operator: tasks.filter((task) => task.assignedTo === "Operator").length,
+    Oboje: tasks.filter((task) => task.assignedTo === "Oboje").length,
+    Pilne: tasks.filter((task) => task.priority === "Pilny").length,
+    Zrobione: tasks.filter((task) => task.status === "Zrobione").length,
+    Anulowane: tasks.filter((task) => task.status === "Anulowane").length,
+  };
 
   return (
     <section className="tasks-page">
@@ -115,7 +134,7 @@ Pilne: tasks.filter((task) => task.priority === 'Pilny').length,
           className="primary-button"
           onClick={() => setIsFormVisible((currentValue) => !currentValue)}
         >
-          {isFormVisible ? 'Zamknij formularz' : 'Dodaj zadanie'}
+          {isFormVisible ? "Zamknij formularz" : "Dodaj zadanie"}
         </button>
       </div>
 
@@ -123,38 +142,38 @@ Pilne: tasks.filter((task) => task.priority === 'Pilny').length,
 
       <div className="task-filters">
         {taskFilters.map((filter) => (
-        <button
-  key={filter}
-  className={
-    activeFilter === filter ? 'filter-button active' : 'filter-button'
-  }
-  onClick={() => setActiveFilter(filter)}
->
-  {filter}
-  <span>{taskFilterCounts[filter]}</span>
-</button>
+          <button
+            key={filter}
+            className={
+              activeFilter === filter ? "filter-button active" : "filter-button"
+            }
+            onClick={() => setActiveFilter(filter)}
+          >
+            {filter}
+            <span>{taskFilterCounts[filter]}</span>
+          </button>
         ))}
       </div>
 
       {filteredTasks.length === 0 ? (
-  <div className="empty-state">
-    <h3>Brak zadań</h3>
-    <p>Nie ma zadań pasujących do wybranego filtra.</p>
-  </div>
-) : (
-  <div className="tasks-list">
-    {filteredTasks.map((task) => (
-  <TaskCard
-  key={task.id}
-  task={task}
-  taskStatuses={taskStatuses}
-  onChangeStatus={handleChangeTaskStatus}
-  onAddComment={handleAddTaskComment}
-  onCancelTask={handleCancelTask}
-/>
-    ))}
-  </div>
-)}
+        <div className="empty-state">
+          <h3>Brak zadań</h3>
+          <p>Nie ma zadań pasujących do wybranego filtra.</p>
+        </div>
+      ) : (
+        <div className="tasks-list">
+          {filteredTasks.map((task) => (
+            <TaskCard
+              key={task.id}
+              task={task}
+              taskStatuses={taskStatuses}
+              onChangeStatus={handleChangeTaskStatus}
+              onAddComment={handleAddTaskComment}
+              onCancelTask={handleCancelTask}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
