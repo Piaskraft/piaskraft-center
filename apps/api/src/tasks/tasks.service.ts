@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTaskCommentDto } from './dto/create-task-comment.dto';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -34,6 +34,23 @@ export class TasksService {
         content: data.content,
       },
     });
+  }
+
+  async deleteComment(taskId: number, commentId: number) {
+    const result = await this.prisma.taskComment.deleteMany({
+      where: {
+        id: commentId,
+        taskId,
+      },
+    });
+
+    if (result.count === 0) {
+      throw new NotFoundException('Komentarz nie istnieje.');
+    }
+
+    return {
+      success: true,
+    };
   }
 
   update(taskId: number, data: UpdateTaskDto) {

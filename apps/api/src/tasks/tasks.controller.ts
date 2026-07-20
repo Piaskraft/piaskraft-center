@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -27,6 +28,15 @@ export class TasksController {
     @Body() data: CreateTaskCommentDto,
   ) {
     return this.tasksService.addComment(taskId, data);
+  }
+
+  @Delete(':taskId/comments/:commentId')
+  deleteComment(
+    @Param('taskId', ParseIntPipe) taskId: number,
+    @Param('commentId', ParseIntPipe)
+    commentId: number,
+  ) {
+    return this.tasksService.deleteComment(taskId, commentId);
   }
 
   @Patch(':taskId')
