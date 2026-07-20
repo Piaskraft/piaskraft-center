@@ -215,3 +215,23 @@ export async function updateTaskStatus(
 
   return mapTaskFromApi(updatedTask);
 }
+export async function addTaskComment(taskId: number, content: string) {
+  const response = await fetch(`${apiBaseUrl}/tasks/${taskId}/comments`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      author: "ADMIN",
+      content,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Nie udało się dodać komentarza.");
+  }
+
+  const createdComment = (await response.json()) as ApiTaskComment;
+
+  return mapCommentFromApi(createdComment);
+}

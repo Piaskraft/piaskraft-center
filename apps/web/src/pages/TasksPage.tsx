@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { TaskCard } from "../features/tasks/TaskCard";
 import { TaskForm, type NewTaskData } from "../features/tasks/TaskForm";
 import {
+  addTaskComment,
   createTask,
   getTasks,
   updateTaskStatus,
@@ -52,28 +53,25 @@ export function TasksPage() {
     }
   }
 
-  function handleAddTaskComment(taskId: number, content: string) {
-    const today = new Date().toISOString().slice(0, 10);
+  async function handleAddTaskComment(taskId: number, content: string) {
+    setActionError("");
 
-    setTasks((currentTasks) =>
-      currentTasks.map((task) =>
-        task.id === taskId
-          ? {
-              ...task,
-              comments: [
-                ...task.comments,
-                {
-                  id: Date.now(),
-                  author: "Admin",
-                  content,
-                  createdAt: today,
-                },
-              ],
-              updatedAt: today,
-            }
-          : task,
-      ),
-    );
+    try {
+      const createdComment = await addTaskComment(taskId, content);
+
+      setTasks((currentTasks) =>
+        currentTasks.map((task) =>
+          task.id === taskId
+            ? {
+                ...task,
+                comments: [...task.comments, createdComment],
+              }
+            : task,
+        ),
+      );
+    } catch {
+      setActionError("Nie udało się dodać komentarza.");
+    }
   }
 
   async function handleChangeTaskStatus(taskId: number, status: TaskStatus) {
