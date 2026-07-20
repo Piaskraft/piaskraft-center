@@ -20,6 +20,8 @@ export function TasksPage() {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [activeFilter, setActiveFilter] = useState<TaskFilter>("Wszystkie");
   const [actionError, setActionError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
     let isCancelled = false;
@@ -33,6 +35,12 @@ export function TasksPage() {
       .catch(() => {
         if (!isCancelled) {
           setTasks([]);
+          setLoadError("Nie udało się pobrać zadań. Sprawdź, czy API działa.");
+        }
+      })
+      .finally(() => {
+        if (!isCancelled) {
+          setIsLoading(false);
         }
       });
 
@@ -163,22 +171,36 @@ export function TasksPage() {
 
       {actionError && <div className="form-error">{actionError}</div>}
 
-      <div className="task-filters">
-        {taskFilters.map((filter) => (
-          <button
-            key={filter}
-            className={
-              activeFilter === filter ? "filter-button active" : "filter-button"
-            }
-            onClick={() => setActiveFilter(filter)}
-          >
-            {filter}
-            <span>{taskFilterCounts[filter]}</span>
-          </button>
-        ))}
-      </div>
+      {!isLoading && !loadError && (
+        <div className="task-filters">
+          {taskFilters.map((filter) => (
+            <button
+              key={filter}
+              className={
+                activeFilter === filter
+                  ? "filter-button active"
+                  : "filter-button"
+              }
+              onClick={() => setActiveFilter(filter)}
+            >
+              {filter}
+              <span>{taskFilterCounts[filter]}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
-      {filteredTasks.length === 0 ? (
+      {isLoading ? (
+        <div className="empty-state">
+          <h3>Ładowanie zadań...</h3>
+          <p>Pobieramy dane z API.</p>
+        </div>
+      ) : loadError ? (
+        <div className="empty-state">
+          <h3>Nie udało się pobrać zadań</h3>
+          <p>{loadError}</p>
+        </div>
+      ) : filteredTasks.length === 0 ? (
         <div className="empty-state">
           <h3>Brak zadań</h3>
           <p>Nie ma zadań pasujących do wybranego filtra.</p>
