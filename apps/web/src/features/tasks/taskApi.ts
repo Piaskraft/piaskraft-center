@@ -83,6 +83,15 @@ const taskPriorityToApi = {
   Dzisiaj: "TODAY",
 } as const satisfies Record<TaskPriority, ApiTaskPriority>;
 
+const taskStatusToApi = {
+  Nowe: "NEW",
+  "Do zrobienia": "TODO",
+  "W trakcie": "IN_PROGRESS",
+  "Czeka na sprawdzenie": "WAITING_REVIEW",
+  Zrobione: "DONE",
+  Anulowane: "CANCELLED",
+} as const satisfies Record<TaskStatus, ApiTaskStatus>;
+
 type ApiTaskComment = {
   id: number;
   taskId: number;
@@ -182,4 +191,27 @@ export async function createTask(task: CreateTaskInput): Promise<Task> {
   const createdTask = (await response.json()) as ApiTask;
 
   return mapTaskFromApi(createdTask);
+}
+
+export async function updateTaskStatus(
+  taskId: number,
+  status: TaskStatus,
+): Promise<Task> {
+  const response = await fetch(`${apiBaseUrl}/tasks/${taskId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      status: taskStatusToApi[status],
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Nie udało się zmienić statusu zadania.");
+  }
+
+  const updatedTask = (await response.json()) as ApiTask;
+
+  return mapTaskFromApi(updatedTask);
 }

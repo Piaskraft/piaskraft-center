@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { TaskCard } from "../features/tasks/TaskCard";
 import { TaskForm, type NewTaskData } from "../features/tasks/TaskForm";
-import { createTask, getTasks } from "../features/tasks/taskApi";
+import {
+  createTask,
+  getTasks,
+  updateTaskStatus,
+} from "../features/tasks/taskApi";
 import {
   taskFilters,
   taskStatuses,
@@ -72,50 +76,35 @@ export function TasksPage() {
     );
   }
 
-  function handleChangeTaskStatus(taskId: number, status: TaskStatus) {
-    const today = new Date().toISOString().slice(0, 10);
+  async function handleChangeTaskStatus(taskId: number, status: TaskStatus) {
+    setActionError("");
 
-    setTasks((currentTasks) =>
-      currentTasks.map((task) =>
-        task.id === taskId
-          ? {
-              ...task,
-              status,
-              updatedAt: today,
-            }
-          : task,
-      ),
-    );
+    try {
+      const updatedTask = await updateTaskStatus(taskId, status);
+
+      setTasks((currentTasks) =>
+        currentTasks.map((task) => (task.id === taskId ? updatedTask : task)),
+      );
+    } catch {
+      setActionError("Nie udało się zmienić statusu zadania.");
+    }
   }
 
   function handleCancelTask(taskId: number) {
-    handleChangeTaskStatus(taskId, "Anulowane");
+    void handleChangeTaskStatus(taskId, "Anulowane");
   }
 
   const filteredTasks = tasks.filter((task) => {
     if (activeFilter === "Wszystkie") return true;
-    if (activeFilter === "Admin") {
-      return task.assignedTo === "Admin";
-    }
-    if (activeFilter === "Operator") {
-      return task.assignedTo === "Operator";
-    }
-    if (activeFilter === "Oboje") {
-      return task.assignedTo === "Oboje";
-    }
-    if (activeFilter === "Pilne") {
-      return task.priority === "Pilny";
-    }
-    if (activeFilter === "Zrobione") {
-      return task.status === "Zrobione";
-    }
-    if (activeFilter === "Anulowane") {
-      return task.status === "Anulowane";
-    }
+    if (activeFilter === "Admin") return task.assignedTo === "Admin";
+    if (activeFilter === "Operator") return task.assignedTo === "Operator";
+    if (activeFilter === "Oboje") return task.assignedTo === "Oboje";
+    if (activeFilter === "Pilne") return task.priority === "Pilny";
+    if (activeFilter === "Zrobione") return task.status === "Zrobione";
+    if (activeFilter === "Anulowane") return task.status === "Anulowane";
 
     return true;
   });
-
   const taskFilterCounts: Record<TaskFilter, number> = {
     Wszystkie: tasks.length,
     Admin: tasks.filter((task) => task.assignedTo === "Admin").length,
