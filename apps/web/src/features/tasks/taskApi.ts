@@ -56,6 +56,33 @@ type ApiTaskCategory = keyof typeof taskCategoryFromApi;
 type ApiTaskPriority = keyof typeof taskPriorityFromApi;
 type ApiTaskStatus = keyof typeof taskStatusFromApi;
 
+const assignedUserToApi = {
+  Admin: "ADMIN",
+  Operator: "OPERATOR",
+  Oboje: "BOTH",
+} as const satisfies Record<AssignedUser, ApiAssignedUser>;
+
+const taskCategoryToApi = {
+  Piaskraft: "PIASKRAFT",
+  PrestaShop: "PRESTASHOP",
+  eBay: "EBAY",
+  BaseLinker: "BASELINKER",
+  MJW: "MJW",
+  Marketing: "MARKETING",
+  Dokumenty: "DOCUMENTS",
+  Telefon: "PHONE",
+  Prywatne: "PRIVATE",
+  Inne: "OTHER",
+} as const satisfies Record<TaskCategory, ApiTaskCategory>;
+
+const taskPriorityToApi = {
+  Niski: "LOW",
+  Normalny: "NORMAL",
+  Ważny: "IMPORTANT",
+  Pilny: "URGENT",
+  Dzisiaj: "TODAY",
+} as const satisfies Record<TaskPriority, ApiTaskPriority>;
+
 type ApiTaskComment = {
   id: number;
   taskId: number;
@@ -117,4 +144,42 @@ export async function getTasks(): Promise<Task[]> {
   const tasks = (await response.json()) as ApiTask[];
 
   return tasks.map(mapTaskFromApi);
+}
+
+type CreateTaskInput = Pick<
+  Task,
+  | "title"
+  | "description"
+  | "assignedTo"
+  | "category"
+  | "priority"
+  | "date"
+  | "time"
+>;
+
+export async function createTask(task: CreateTaskInput): Promise<Task> {
+  const response = await fetch(`${apiBaseUrl}/tasks`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      title: task.title,
+      description: task.description,
+      assignedTo: assignedUserToApi[task.assignedTo],
+      category: taskCategoryToApi[task.category],
+      priority: taskPriorityToApi[task.priority],
+      date: task.date,
+      time: task.time || undefined,
+      createdBy: "ADMIN",
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Nie udało się utworzyć zadania.");
+  }
+
+  const createdTask = (await response.json()) as ApiTask;
+
+  return mapTaskFromApi(createdTask);
 }

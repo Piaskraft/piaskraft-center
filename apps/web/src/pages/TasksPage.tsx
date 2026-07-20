@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { TaskCard } from "../features/tasks/TaskCard";
 import { TaskForm, type NewTaskData } from "../features/tasks/TaskForm";
-import { getTasks } from "../features/tasks/taskApi";
+import { createTask, getTasks } from "../features/tasks/taskApi";
 import {
   taskFilters,
   taskStatuses,
@@ -13,6 +13,7 @@ export function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [activeFilter, setActiveFilter] = useState<TaskFilter>("Wszystkie");
+  const [actionError, setActionError] = useState("");
 
   useEffect(() => {
     let isCancelled = false;
@@ -34,27 +35,17 @@ export function TasksPage() {
     };
   }, []);
 
-  function handleAddTask(newTask: NewTaskData) {
-    const today = new Date().toISOString().slice(0, 10);
+  async function handleAddTask(newTask: NewTaskData) {
+    setActionError("");
 
-    const task: Task = {
-      id: Date.now(),
-      title: newTask.title,
-      description: newTask.description,
-      assignedTo: newTask.assignedTo,
-      category: newTask.category,
-      priority: newTask.priority,
-      status: "Nowe",
-      date: newTask.date,
-      time: newTask.time,
-      comments: [],
-      createdBy: "Admin",
-      createdAt: today,
-      updatedAt: today,
-    };
+    try {
+      const createdTask = await createTask(newTask);
 
-    setTasks((currentTasks) => [task, ...currentTasks]);
-    setIsFormVisible(false);
+      setTasks((currentTasks) => [createdTask, ...currentTasks]);
+      setIsFormVisible(false);
+    } catch {
+      setActionError("Nie udało się zapisać zadania. Spróbuj ponownie.");
+    }
   }
 
   function handleAddTaskComment(taskId: number, content: string) {
@@ -96,18 +87,31 @@ export function TasksPage() {
       ),
     );
   }
+
   function handleCancelTask(taskId: number) {
     handleChangeTaskStatus(taskId, "Anulowane");
   }
 
   const filteredTasks = tasks.filter((task) => {
     if (activeFilter === "Wszystkie") return true;
-    if (activeFilter === "Admin") return task.assignedTo === "Admin";
-    if (activeFilter === "Operator") return task.assignedTo === "Operator";
-    if (activeFilter === "Oboje") return task.assignedTo === "Oboje";
-    if (activeFilter === "Pilne") return task.priority === "Pilny";
-    if (activeFilter === "Zrobione") return task.status === "Zrobione";
-    if (activeFilter === "Anulowane") return task.status === "Anulowane";
+    if (activeFilter === "Admin") {
+      return task.assignedTo === "Admin";
+    }
+    if (activeFilter === "Operator") {
+      return task.assignedTo === "Operator";
+    }
+    if (activeFilter === "Oboje") {
+      return task.assignedTo === "Oboje";
+    }
+    if (activeFilter === "Pilne") {
+      return task.priority === "Pilny";
+    }
+    if (activeFilter === "Zrobione") {
+      return task.status === "Zrobione";
+    }
+    if (activeFilter === "Anulowane") {
+      return task.status === "Anulowane";
+    }
 
     return true;
   });
@@ -139,6 +143,8 @@ export function TasksPage() {
       </div>
 
       {isFormVisible && <TaskForm onAddTask={handleAddTask} />}
+
+      {actionError && <div className="form-error">{actionError}</div>}
 
       <div className="task-filters">
         {taskFilters.map((filter) => (
