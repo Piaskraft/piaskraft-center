@@ -4,6 +4,7 @@ import { TaskForm, type NewTaskData } from "../features/tasks/TaskForm";
 import {
   addTaskComment,
   createTask,
+  deleteTaskComment,
   getTasks,
   updateTaskStatus,
 } from "../features/tasks/taskApi";
@@ -71,6 +72,35 @@ export function TasksPage() {
       );
     } catch {
       setActionError("Nie udało się dodać komentarza.");
+    }
+  }
+
+  async function handleDeleteTaskComment(taskId: number, commentId: number) {
+    const shouldDelete = window.confirm(
+      "Czy na pewno chcesz usunąć ten komentarz?",
+    );
+
+    if (!shouldDelete) return;
+
+    setActionError("");
+
+    try {
+      await deleteTaskComment(taskId, commentId);
+
+      setTasks((currentTasks) =>
+        currentTasks.map((task) =>
+          task.id === taskId
+            ? {
+                ...task,
+                comments: task.comments.filter(
+                  (comment) => comment.id !== commentId,
+                ),
+              }
+            : task,
+        ),
+      );
+    } catch {
+      setActionError("Nie udało się usunąć komentarza.");
     }
   }
 
@@ -162,6 +192,7 @@ export function TasksPage() {
               taskStatuses={taskStatuses}
               onChangeStatus={handleChangeTaskStatus}
               onAddComment={handleAddTaskComment}
+              onDeleteComment={handleDeleteTaskComment}
               onCancelTask={handleCancelTask}
             />
           ))}

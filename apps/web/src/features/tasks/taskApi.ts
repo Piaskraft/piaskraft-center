@@ -235,3 +235,18 @@ export async function addTaskComment(taskId: number, content: string) {
 
   return mapCommentFromApi(createdComment);
 }
+export async function deleteTaskComment(
+  taskId: number,
+  commentId: number,
+): Promise<void> {
+  const response = await fetch(
+    `${apiBaseUrl}/tasks/${taskId}/comments/${commentId}`,
+    {
+      method: "DELETE",
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Nie udało się usunąć komentarza.");
+  }
+}

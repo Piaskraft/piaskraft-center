@@ -1,12 +1,13 @@
-import { useState, type FormEvent } from 'react';
-import type { Task, TaskStatus } from './taskTypes';
-import { isTaskOverdue } from './taskUtils';
+import { useState, type FormEvent } from "react";
+import type { Task, TaskStatus } from "./taskTypes";
+import { isTaskOverdue } from "./taskUtils";
 
 type TaskCardProps = {
   task: Task;
   taskStatuses: TaskStatus[];
   onChangeStatus: (taskId: number, status: TaskStatus) => void;
   onAddComment: (taskId: number, content: string) => void;
+  onDeleteComment: (taskId: number, commentId: number) => void;
   onCancelTask: (taskId: number) => void;
 };
 
@@ -15,18 +16,19 @@ export function TaskCard({
   taskStatuses,
   onChangeStatus,
   onAddComment,
+  onDeleteComment,
   onCancelTask,
 }: TaskCardProps) {
   const [isDetailsVisible, setIsDetailsVisible] = useState(false);
   const [isCommentFormVisible, setIsCommentFormVisible] = useState(false);
 
-const isOverdue = isTaskOverdue(task);
+  const isOverdue = isTaskOverdue(task);
 
   function handleAddComment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    const content = String(formData.get('comment') || '').trim();
+    const content = String(formData.get("comment") || "").trim();
 
     if (!content) return;
 
@@ -36,12 +38,14 @@ const isOverdue = isTaskOverdue(task);
     setIsDetailsVisible(true);
   }
 
-return (
-  <article
-    className={
-      task.status === 'Anulowane' ? 'task-card task-card-cancelled' : 'task-card'
-    }
-  >
+  return (
+    <article
+      className={
+        task.status === "Anulowane"
+          ? "task-card task-card-cancelled"
+          : "task-card"
+      }
+    >
       <div className="task-main">
         <h3>{task.title}</h3>
 
@@ -63,6 +67,13 @@ return (
                     <strong>{comment.author}</strong>
                     <span>{comment.createdAt}</span>
                     <p>{comment.content}</p>
+                    <button
+                      type="button"
+                      className="danger-text-button"
+                      onClick={() => onDeleteComment(task.id, comment.id)}
+                    >
+                      Usuń komentarz
+                    </button>
                   </div>
                 ))}
               </div>
@@ -85,21 +96,21 @@ return (
         )}
 
         <div className="task-actions">
-          {task.status !== 'Anulowane' && task.status !== 'Zrobione' && (
-  <button
-    type="button"
-    className="danger-text-button"
-    onClick={() => onCancelTask(task.id)}
-  >
-    Anuluj zadanie
-  </button>
-)}
+          {task.status !== "Anulowane" && task.status !== "Zrobione" && (
+            <button
+              type="button"
+              className="danger-text-button"
+              onClick={() => onCancelTask(task.id)}
+            >
+              Anuluj zadanie
+            </button>
+          )}
           <button
             type="button"
             className="text-button"
             onClick={() => setIsDetailsVisible((currentValue) => !currentValue)}
           >
-            {isDetailsVisible ? 'Ukryj szczegóły' : 'Pokaż szczegóły'}
+            {isDetailsVisible ? "Ukryj szczegóły" : "Pokaż szczegóły"}
           </button>
 
           <button
@@ -110,7 +121,7 @@ return (
               setIsCommentFormVisible((currentValue) => !currentValue);
             }}
           >
-            {isCommentFormVisible ? 'Anuluj komentarz' : 'Dodaj komentarz'}
+            {isCommentFormVisible ? "Anuluj komentarz" : "Dodaj komentarz"}
           </button>
         </div>
       </div>
