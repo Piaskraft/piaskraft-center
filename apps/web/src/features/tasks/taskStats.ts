@@ -1,29 +1,34 @@
-import type { Task } from './taskTypes';
-import { isTaskOverdue } from './taskUtils';
+import type { Task } from "./taskTypes";
+import { isTaskOverdue } from "./taskUtils";
 
 export function getTaskStats(tasks: Task[]) {
   const today = new Date().toISOString().slice(0, 10);
 
-  const tasksToday = tasks.filter(
-    (task) => task.date === today && task.status !== 'Anulowane',
+  const currentTasks = tasks.filter((task) => task.archivedAt === null);
+  const archivedTasks = tasks.filter((task) => task.archivedAt !== null);
+
+  const tasksToday = currentTasks.filter(
+    (task) => task.date === today && task.status !== "Anulowane",
   );
 
-  const activeTasks = tasks.filter(
-    (task) => task.status !== 'Zrobione' && task.status !== 'Anulowane',
+  const activeTasks = currentTasks.filter(
+    (task) => task.status !== "Zrobione" && task.status !== "Anulowane",
   );
 
-  const overdueTasks = tasks.filter((task) => isTaskOverdue(task));
+  const overdueTasks = currentTasks.filter((task) => isTaskOverdue(task));
 
-  const urgentTasks = tasks.filter(
+  const urgentTasks = currentTasks.filter(
     (task) =>
-      task.priority === 'Pilny' &&
-      task.status !== 'Zrobione' &&
-      task.status !== 'Anulowane',
+      task.priority === "Pilny" &&
+      task.status !== "Zrobione" &&
+      task.status !== "Anulowane",
   );
 
-  const doneTasks = tasks.filter((task) => task.status === 'Zrobione');
+  const doneTasks = currentTasks.filter((task) => task.status === "Zrobione");
 
-  const cancelledTasks = tasks.filter((task) => task.status === 'Anulowane');
+  const cancelledTasks = currentTasks.filter(
+    (task) => task.status === "Anulowane",
+  );
 
   return {
     tasksToday: tasksToday.length,
@@ -32,5 +37,6 @@ export function getTaskStats(tasks: Task[]) {
     urgentTasks: urgentTasks.length,
     doneTasks: doneTasks.length,
     cancelledTasks: cancelledTasks.length,
+    archivedTasks: archivedTasks.length,
   };
 }

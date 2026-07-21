@@ -1,7 +1,58 @@
-import { tasks } from '../features/tasks/taskMockData';
-import { getTaskStats } from '../features/tasks/taskStats';
+import { useEffect, useState } from "react";
+import { getTasks } from "../features/tasks/taskApi";
+import { getTaskStats } from "../features/tasks/taskStats";
+import type { Task } from "../features/tasks/taskTypes";
 
 export function DashboardPage() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    getTasks()
+      .then((tasksFromApi) => {
+        if (!isCancelled) {
+          setTasks(tasksFromApi);
+        }
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setLoadError(
+            "Nie udało się pobrać statystyk. Sprawdź, czy API działa.",
+          );
+        }
+      })
+      .finally(() => {
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="empty-state">
+        <h3>Ładowanie statystyk...</h3>
+        <p>Pobieramy zadania z API.</p>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="empty-state">
+        <h3>Nie udało się pobrać statystyk</h3>
+        <p>{loadError}</p>
+      </div>
+    );
+  }
+
   const stats = getTaskStats(tasks);
 
   return (
@@ -34,6 +85,11 @@ export function DashboardPage() {
       <div className="dashboard-card">
         <span>Anulowane</span>
         <strong>{stats.cancelledTasks}</strong>
+      </div>
+
+      <div className="dashboard-card">
+        <span>Archiwum</span>
+        <strong>{stats.archivedTasks}</strong>
       </div>
     </section>
   );
