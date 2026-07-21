@@ -9,6 +9,8 @@ type TaskCardProps = {
   onAddComment: (taskId: number, content: string) => void;
   onDeleteComment: (taskId: number, commentId: number) => void;
   onCancelTask: (taskId: number) => void;
+  onArchiveTask: (taskId: number) => void;
+  onRestoreTask: (taskId: number) => void;
 };
 
 export function TaskCard({
@@ -18,6 +20,8 @@ export function TaskCard({
   onAddComment,
   onDeleteComment,
   onCancelTask,
+  onArchiveTask,
+  onRestoreTask,
 }: TaskCardProps) {
   const [isDetailsVisible, setIsDetailsVisible] = useState(false);
   const [isCommentFormVisible, setIsCommentFormVisible] = useState(false);
@@ -67,6 +71,7 @@ export function TaskCard({
                     <strong>{comment.author}</strong>
                     <span>{comment.createdAt}</span>
                     <p>{comment.content}</p>
+
                     <button
                       type="button"
                       className="danger-text-button"
@@ -96,6 +101,27 @@ export function TaskCard({
         )}
 
         <div className="task-actions">
+          {task.archivedAt && (
+            <button
+              type="button"
+              className="text-button"
+              onClick={() => onRestoreTask(task.id)}
+            >
+              Przywróć zadanie
+            </button>
+          )}
+
+          {!task.archivedAt &&
+            (task.status === "Zrobione" || task.status === "Anulowane") && (
+              <button
+                type="button"
+                className="text-button"
+                onClick={() => onArchiveTask(task.id)}
+              >
+                Archiwizuj zadanie
+              </button>
+            )}
+
           {task.status !== "Anulowane" && task.status !== "Zrobione" && (
             <button
               type="button"
@@ -105,6 +131,7 @@ export function TaskCard({
               Anuluj zadanie
             </button>
           )}
+
           <button
             type="button"
             className="text-button"

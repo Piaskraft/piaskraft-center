@@ -13,12 +13,25 @@ describe('TasksService', () => {
   const findManyMock =
     jest.fn<(options: unknown) => Promise<Array<{ id: number }>>>();
 
+  const findUniqueMock = jest.fn<
+    (options: unknown) => Promise<{
+      id: number;
+      status: string;
+      archivedAt: Date | null;
+    } | null>
+  >();
+
+  const updateMock =
+    jest.fn<(options: unknown) => Promise<Record<string, unknown>>>();
+
   const deleteManyMock =
     jest.fn<(options: unknown) => Promise<{ count: number }>>();
 
   const prismaMock = {
     task: {
       findMany: findManyMock,
+      findUnique: findUniqueMock,
+      update: updateMock,
     },
     taskComment: {
       deleteMany: deleteManyMock,
@@ -42,6 +55,75 @@ describe('TasksService', () => {
       },
       orderBy: {
         createdAt: 'desc',
+      },
+    });
+  });
+  it('archives a completed task', async () => {
+    const archivedTask = {
+      id: 1,
+      archivedAt: new Date(),
+    };
+
+    findUniqueMock.mockResolvedValue({
+      id: 1,
+      status: 'DONE',
+      archivedAt: null,
+    });
+
+    updateMock.mockResolvedValue(archivedTask);
+
+    await expect(service.archive(1)).resolves.toEqual(archivedTask);
+
+    expect(findUniqueMock).toHaveBeenCalledWith({
+      where: {
+        id: 1,
+      },
+    });
+
+    expect(updateMock).toHaveBeenCalledWith({
+      where: {
+        id: 1,
+      },
+      data: {
+        archivedAt: expect.any(Date),
+      },
+      include: {
+        comments: true,
+      },
+    });
+  });
+
+  it('restores an archived task', async () => {
+    const restoredTask = {
+      id: 1,
+      archivedAt: null,
+    };
+
+    findUniqueMock.mockResolvedValue({
+      id: 1,
+      status: 'DONE',
+      archivedAt: new Date(),
+    });
+
+    updateMock.mockResolvedValue(restoredTask);
+
+    await expect(service.restore(1)).resolves.toEqual(restoredTask);
+
+    expect(findUniqueMock).toHaveBeenCalledWith({
+      where: {
+        id: 1,
+      },
+    });
+
+    expect(updateMock).toHaveBeenCalledWith({
+      where: {
+        id: 1,
+      },
+      data: {
+        archivedAt: null,
+      },
+      include: {
+        comments: true,
       },
     });
   });

@@ -1,30 +1,25 @@
 export type TaskCategory =
-  | 'Piaskraft'
-  | 'PrestaShop'
-  | 'eBay'
-  | 'BaseLinker'
-  | 'MJW'
-  | 'Marketing'
-  | 'Dokumenty'
-  | 'Telefon'
-  | 'Prywatne'
-  | 'Inne';
+  | "Piaskraft"
+  | "PrestaShop"
+  | "eBay"
+  | "BaseLinker"
+  | "MJW"
+  | "Marketing"
+  | "Dokumenty"
+  | "Telefon"
+  | "Prywatne"
+  | "Inne";
 
-export type TaskPriority =
-  | 'Niski'
-  | 'Normalny'
-  | 'Ważny'
-  | 'Pilny'
-  | 'Dzisiaj';
+export type TaskPriority = "Niski" | "Normalny" | "Ważny" | "Pilny" | "Dzisiaj";
 
 export type TaskStatus =
-  | 'Nowe'
-  | 'Do zrobienia'
-  | 'W trakcie'
-  | 'Czeka na sprawdzenie'
-  | 'Zrobione'
-  | 'Anulowane';
-export type AssignedUser = 'Admin' | 'Operator' | 'Oboje';
+  | "Nowe"
+  | "Do zrobienia"
+  | "W trakcie"
+  | "Czeka na sprawdzenie"
+  | "Zrobione"
+  | "Anulowane";
+export type AssignedUser = "Admin" | "Operator" | "Oboje";
 
 export type TaskComment = {
   id: number;
@@ -41,6 +36,7 @@ export type Task = {
   category: TaskCategory;
   priority: TaskPriority;
   status: TaskStatus;
+  archivedAt: string | null;
   date: string;
   time?: string;
   comments: TaskComment[];

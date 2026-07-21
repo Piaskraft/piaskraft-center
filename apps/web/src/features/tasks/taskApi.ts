@@ -108,6 +108,7 @@ type ApiTask = {
   category: ApiTaskCategory;
   priority: ApiTaskPriority;
   status: ApiTaskStatus;
+  archivedAt: string | null;
   date: string | null;
   time: string | null;
   createdBy: ApiTaskAuthor;
@@ -134,6 +135,7 @@ function mapTaskFromApi(task: ApiTask): Task {
     category: taskCategoryFromApi[task.category],
     priority: taskPriorityFromApi[task.priority],
     status: taskStatusFromApi[task.status],
+    archivedAt: task.archivedAt,
     date: task.date?.slice(0, 10) || "",
     time: task.time?.slice(11, 16) || undefined,
     createdBy: taskAuthorFromApi[task.createdBy],
@@ -215,6 +217,35 @@ export async function updateTaskStatus(
 
   return mapTaskFromApi(updatedTask);
 }
+
+export async function archiveTask(taskId: number): Promise<Task> {
+  const response = await fetch(`${apiBaseUrl}/tasks/${taskId}/archive`, {
+    method: "PATCH",
+  });
+
+  if (!response.ok) {
+    throw new Error("Nie udało się przenieść zadania do archiwum.");
+  }
+
+  const archivedTask = (await response.json()) as ApiTask;
+
+  return mapTaskFromApi(archivedTask);
+}
+
+export async function restoreTask(taskId: number): Promise<Task> {
+  const response = await fetch(`${apiBaseUrl}/tasks/${taskId}/restore`, {
+    method: "PATCH",
+  });
+
+  if (!response.ok) {
+    throw new Error("Nie udało się przywrócić zadania z archiwum.");
+  }
+
+  const restoredTask = (await response.json()) as ApiTask;
+
+  return mapTaskFromApi(restoredTask);
+}
+
 export async function addTaskComment(taskId: number, content: string) {
   const response = await fetch(`${apiBaseUrl}/tasks/${taskId}/comments`, {
     method: "POST",

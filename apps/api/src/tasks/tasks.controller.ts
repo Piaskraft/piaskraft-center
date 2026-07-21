@@ -46,6 +46,15 @@ export class TasksController {
   ) {
     return this.tasksService.update(taskId, data);
   }
+  @Patch(':taskId/archive')
+  archive(@Param('taskId', ParseIntPipe) taskId: number) {
+    return this.tasksService.archive(taskId);
+  }
+
+  @Patch(':taskId/restore')
+  restore(@Param('taskId', ParseIntPipe) taskId: number) {
+    return this.tasksService.restore(taskId);
+  }
 
   @Get()
   findAll() {

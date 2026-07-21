@@ -3,9 +3,11 @@ import { TaskCard } from "../features/tasks/TaskCard";
 import { TaskForm, type NewTaskData } from "../features/tasks/TaskForm";
 import {
   addTaskComment,
+  archiveTask,
   createTask,
   deleteTaskComment,
   getTasks,
+  restoreTask,
   updateTaskStatus,
 } from "../features/tasks/taskApi";
 import {
@@ -130,7 +132,40 @@ export function TasksPage() {
     void handleChangeTaskStatus(taskId, "Anulowane");
   }
 
+  async function handleArchiveTask(taskId: number) {
+    setActionError("");
+
+    try {
+      const archivedTask = await archiveTask(taskId);
+
+      setTasks((currentTasks) =>
+        currentTasks.map((task) => (task.id === taskId ? archivedTask : task)),
+      );
+    } catch {
+      setActionError("Nie udało się przenieść zadania do archiwum.");
+    }
+  }
+
+  async function handleRestoreTask(taskId: number) {
+    setActionError("");
+
+    try {
+      const restoredTask = await restoreTask(taskId);
+
+      setTasks((currentTasks) =>
+        currentTasks.map((task) => (task.id === taskId ? restoredTask : task)),
+      );
+    } catch {
+      setActionError("Nie udało się przywrócić zadania z archiwum.");
+    }
+  }
+
+  const activeTasks = tasks.filter((task) => task.archivedAt === null);
+
   const filteredTasks = tasks.filter((task) => {
+    if (activeFilter === "Archiwum") return task.archivedAt !== null;
+    if (task.archivedAt !== null) return false;
+
     if (activeFilter === "Wszystkie") return true;
     if (activeFilter === "Admin") return task.assignedTo === "Admin";
     if (activeFilter === "Operator") return task.assignedTo === "Operator";
@@ -141,14 +176,17 @@ export function TasksPage() {
 
     return true;
   });
+
   const taskFilterCounts: Record<TaskFilter, number> = {
-    Wszystkie: tasks.length,
-    Admin: tasks.filter((task) => task.assignedTo === "Admin").length,
-    Operator: tasks.filter((task) => task.assignedTo === "Operator").length,
-    Oboje: tasks.filter((task) => task.assignedTo === "Oboje").length,
-    Pilne: tasks.filter((task) => task.priority === "Pilny").length,
-    Zrobione: tasks.filter((task) => task.status === "Zrobione").length,
-    Anulowane: tasks.filter((task) => task.status === "Anulowane").length,
+    Wszystkie: activeTasks.length,
+    Admin: activeTasks.filter((task) => task.assignedTo === "Admin").length,
+    Operator: activeTasks.filter((task) => task.assignedTo === "Operator")
+      .length,
+    Oboje: activeTasks.filter((task) => task.assignedTo === "Oboje").length,
+    Pilne: activeTasks.filter((task) => task.priority === "Pilny").length,
+    Zrobione: activeTasks.filter((task) => task.status === "Zrobione").length,
+    Anulowane: activeTasks.filter((task) => task.status === "Anulowane").length,
+    Archiwum: tasks.filter((task) => task.archivedAt !== null).length,
   };
 
   return (
@@ -216,6 +254,8 @@ export function TasksPage() {
               onAddComment={handleAddTaskComment}
               onDeleteComment={handleDeleteTaskComment}
               onCancelTask={handleCancelTask}
+              onArchiveTask={handleArchiveTask}
+              onRestoreTask={handleRestoreTask}
             />
           ))}
         </div>

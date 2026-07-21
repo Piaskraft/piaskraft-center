@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTaskCommentDto } from './dto/create-task-comment.dto';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -81,6 +85,63 @@ export class TasksService {
                 : null,
             }
           : {}),
+      },
+      include: {
+        comments: true,
+      },
+    });
+  }
+
+  async archive(taskId: number) {
+    const task = await this.prisma.task.findUnique({
+      where: {
+        id: taskId,
+      },
+    });
+
+    if (!task) {
+      throw new NotFoundException('Zadanie nie istnieje.');
+    }
+
+    if (task.status !== 'DONE' && task.status !== 'CANCELLED') {
+      throw new BadRequestException(
+        'Do archiwum można przenieść tylko zadanie zrobione lub anulowane.',
+      );
+    }
+
+    return this.prisma.task.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        archivedAt: new Date(),
+      },
+      include: {
+        comments: true,
+      },
+    });
+  }
+  async restore(taskId: number) {
+    const task = await this.prisma.task.findUnique({
+      where: {
+        id: taskId,
+      },
+    });
+
+    if (!task) {
+      throw new NotFoundException('Zadanie nie istnieje.');
+    }
+
+    if (!task.archivedAt) {
+      throw new BadRequestException('Zadanie nie znajduje się w archiwum.');
+    }
+
+    return this.prisma.task.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        archivedAt: null,
       },
       include: {
         comments: true,
