@@ -1,6 +1,10 @@
-import type { Task } from '../tasks/taskTypes';
-import { isTaskOverdue } from '../tasks/taskUtils';
-import { formatDate, getCalendarStatusLabel } from './calendarUtils';
+import type { Task } from "../tasks/taskTypes";
+import { isTaskOverdue } from "../tasks/taskUtils";
+import {
+  formatDate,
+  formatFullCalendarDate,
+  getCalendarStatusLabel,
+} from "./calendarUtils";
 
 type DayCalendarViewProps = {
   selectedDate: Date;
@@ -12,12 +16,12 @@ export function DayCalendarView({ selectedDate, tasks }: DayCalendarViewProps) {
 
   const dayTasks = tasks
     .filter((task) => task.date === selectedDateString)
-    .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+    .sort((a, b) => (a.time || "").localeCompare(b.time || ""));
 
   return (
     <div className="day-view">
       <div className="day-view-header">
-        <h3>{selectedDateString}</h3>
+        <h3>{formatFullCalendarDate(selectedDateString)}</h3>
         <p>Terminy wybranego dnia.</p>
       </div>
 
@@ -35,11 +39,11 @@ export function DayCalendarView({ selectedDate, tasks }: DayCalendarViewProps) {
               <article
                 key={task.id}
                 className={
-                  isOverdue ? 'day-event day-event-overdue' : 'day-event'
+                  isOverdue ? "day-event day-event-overdue" : "day-event"
                 }
               >
                 <div className="day-event-time">
-                  {task.time || 'Bez godziny'}
+                  {task.time || "Bez godziny"}
                 </div>
 
                 <div className="day-event-content">

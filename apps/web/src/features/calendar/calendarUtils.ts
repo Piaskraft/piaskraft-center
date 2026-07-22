@@ -33,6 +33,17 @@ export function createDateFromDateString(dateString: string) {
   return new Date(year, month - 1, day);
 }
 
+export function formatFullCalendarDate(dateString: string) {
+  const formattedDate = new Intl.DateTimeFormat("pl-PL", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(createDateFromDateString(dateString));
+
+  return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+}
+
 function getMonday(date: Date) {
   const currentDate = new Date(date);
   const day = currentDate.getDay();
@@ -68,6 +79,7 @@ export function getMonthDays(date: Date) {
     days.push({
       dayNumber: day,
       date: formatDate(currentDate),
+      weekDayColumn: currentDate.getDay() === 0 ? 7 : currentDate.getDay(),
     });
   }
 
@@ -102,4 +114,11 @@ export function getNavigationLabels(viewMode: CalendarViewMode) {
     current: "Ten tydzień",
     next: "Następny tydzień",
   };
+}
+export function formatCalendarWeekday(dateString: string) {
+  const weekday = new Intl.DateTimeFormat("pl-PL", {
+    weekday: "short",
+  }).format(createDateFromDateString(dateString));
+
+  return weekday.charAt(0).toUpperCase() + weekday.slice(1);
 }
