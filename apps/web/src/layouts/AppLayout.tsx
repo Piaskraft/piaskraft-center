@@ -1,71 +1,80 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import './AppLayout.css';
+import { NavLink, Outlet, useLocation } from "react-router-dom";
+import "./AppLayout.css";
 
 const menuItems = [
-  { label: 'Dashboard', path: '/' },
-  { label: 'Zadania', path: '/zadania' },
-  { label: 'Kalendarz', path: '/kalendarz' },
-  { label: 'Produkty robocze', path: '/produkty-robocze' },
-  { label: 'MJW → Presta Helper', path: '/mjw-presta-helper' },
-  { label: 'eBay Assistant', path: '/ebay-assistant' },
-  { label: 'Monitoring konkurencji', path: '/monitoring-konkurencji' },
-  { label: 'Powiadomienia', path: '/powiadomienia' },
-  { label: 'Baza wiedzy', path: '/baza-wiedzy' },
-  { label: 'Ustawienia', path: '/ustawienia' },
-  { label: 'Użytkownicy', path: '/uzytkownicy' },
+  { label: "Dashboard", path: "/" },
+  { label: "Zadania", path: "/zadania" },
+  { label: "Kalendarz", path: "/kalendarz" },
+  { label: "Produkty robocze", path: "/produkty-robocze" },
+  { label: "MJW → Presta Helper", path: "/mjw-presta-helper" },
+  { label: "eBay Assistant", path: "/ebay-assistant" },
+  { label: "Monitoring konkurencji", path: "/monitoring-konkurencji" },
+  { label: "Powiadomienia", path: "/powiadomienia" },
+  { label: "Baza wiedzy", path: "/baza-wiedzy" },
+  { label: "Ustawienia", path: "/ustawienia" },
+  { label: "Użytkownicy", path: "/uzytkownicy" },
 ];
 
 const pageHeaders: Record<string, { title: string; description: string }> = {
-  '/': {
-    title: 'Dashboard',
-    description: 'Centrum pracy Piaskraft — zadania, produkty i eBay.',
+  "/": {
+    title: "Dashboard",
+    description: "Centrum pracy Piaskraft — zadania, produkty i eBay.",
   },
-  '/zadania': {
-    title: 'Zadania',
-    description: 'Zarządzanie pracą admina i operatora.',
+  "/zadania": {
+    title: "Zadania",
+    description: "Zarządzanie pracą admina i operatora.",
   },
-  '/kalendarz': {
-    title: 'Kalendarz',
-    description: 'Terminy, przypomnienia, telefony i spotkania.',
+  "/kalendarz": {
+    title: "Kalendarz",
+    description: "Terminy, przypomnienia, telefony i spotkania.",
   },
-  '/produkty-robocze': {
-    title: 'Produkty robocze',
-    description: 'Produkty przygotowywane do PrestaShop, eBay i BaseLinkera.',
+  "/produkty-robocze": {
+    title: "Produkty robocze",
+    description: "Produkty przygotowywane do PrestaShop, eBay i BaseLinkera.",
   },
-  '/mjw-presta-helper': {
-    title: 'MJW → Presta Helper',
-    description: 'Gotowe dane produktowe z MJW do ręcznego wklejenia w PrestaShop.',
+  "/mjw-presta-helper": {
+    title: "MJW → Presta Helper",
+    description:
+      "Gotowe dane produktowe z MJW do ręcznego wklejenia w PrestaShop.",
   },
-  '/ebay-assistant': {
-    title: 'eBay Assistant',
-    description: 'Dane do BaseLinkera, kalkulacja ceny i analiza eBay.de.',
+  "/ebay-assistant": {
+    title: "eBay Assistant",
+    description: "Dane do BaseLinkera, kalkulacja ceny i analiza eBay.de.",
   },
-  '/monitoring-konkurencji': {
-    title: 'Monitoring konkurencji',
-    description: 'Śledzenie cen i jakości ofert konkurencji na eBay.de.',
+  "/monitoring-konkurencji": {
+    title: "Monitoring konkurencji",
+    description: "Śledzenie cen i jakości ofert konkurencji na eBay.de.",
   },
-  '/powiadomienia': {
-    title: 'Powiadomienia',
-    description: 'Informacje o zadaniach, terminach, produktach i analizach.',
+  "/powiadomienia": {
+    title: "Powiadomienia",
+    description: "Informacje o zadaniach, terminach, produktach i analizach.",
   },
-  '/baza-wiedzy': {
-    title: 'Baza wiedzy',
-    description: 'Kategorie, prowizje, wysyłki, szablony i reguły SEO.',
+  "/baza-wiedzy": {
+    title: "Baza wiedzy",
+    description: "Kategorie, prowizje, wysyłki, szablony i reguły SEO.",
   },
-  '/ustawienia': {
-    title: 'Ustawienia',
-    description: 'Konfiguracja aplikacji, prowizji, wysyłek i danych firmy.',
+  "/ustawienia": {
+    title: "Ustawienia",
+    description: "Konfiguracja aplikacji, prowizji, wysyłek i danych firmy.",
   },
-  '/uzytkownicy': {
-    title: 'Użytkownicy',
-    description: 'Role, dostępy i widoczność modułów.',
+  "/uzytkownicy": {
+    title: "Użytkownicy",
+    description: "Role, dostępy i widoczność modułów.",
   },
 };
 
 export function AppLayout() {
   const location = useLocation();
-  const currentHeader = pageHeaders[location.pathname] ?? pageHeaders['/'];
+  const currentHeader = pageHeaders[location.pathname] ?? pageHeaders["/"];
+  const formattedDate = new Intl.DateTimeFormat("pl-PL", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date());
 
+  const currentDate =
+    formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
   return (
     <div className="app-layout">
       <aside className="sidebar">
@@ -82,9 +91,9 @@ export function AppLayout() {
             <NavLink
               key={item.path}
               to={item.path}
-              end={item.path === '/'}
+              end={item.path === "/"}
               className={({ isActive }) =>
-                isActive ? 'nav-item active' : 'nav-item'
+                isActive ? "nav-item active" : "nav-item"
               }
             >
               {item.label}
@@ -100,8 +109,12 @@ export function AppLayout() {
             <p>{currentHeader.description}</p>
           </div>
 
-          <div className="user-badge">
-            <span>Admin</span>
+          <div className="topbar-right">
+            <span className="current-date">{currentDate}</span>
+
+            <div className="user-badge">
+              <span>Admin</span>
+            </div>
           </div>
         </header>
 
