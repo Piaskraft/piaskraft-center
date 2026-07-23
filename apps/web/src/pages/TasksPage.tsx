@@ -21,8 +21,9 @@ import type { Task, TaskStatus } from "../features/tasks/taskTypes";
 export function TasksPage() {
   const [searchParams] = useSearchParams();
   const selectedTaskId = Number(searchParams.get("task"));
+  const initialDate = searchParams.get("date") ?? "";
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [isFormVisible, setIsFormVisible] = useState(false);
+  const [isFormVisible, setIsFormVisible] = useState(Boolean(initialDate));
   const [activeFilter, setActiveFilter] = useState<TaskFilter>("Wszystkie");
   const [actionError, setActionError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -208,7 +209,9 @@ export function TasksPage() {
         </button>
       </div>
 
-      {isFormVisible && <TaskForm onAddTask={handleAddTask} />}
+      {isFormVisible && (
+        <TaskForm onAddTask={handleAddTask} initialDate={initialDate} />
+      )}
 
       {actionError && <div className="form-error">{actionError}</div>}
 

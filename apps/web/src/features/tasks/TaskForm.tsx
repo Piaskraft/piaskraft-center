@@ -1,9 +1,5 @@
-import { useState, type FormEvent } from 'react';
-import type {
-  AssignedUser,
-  TaskCategory,
-  TaskPriority,
-} from './taskTypes';
+import { useState, type FormEvent } from "react";
+import type { AssignedUser, TaskCategory, TaskPriority } from "./taskTypes";
 
 export type NewTaskData = {
   title: string;
@@ -17,47 +13,48 @@ export type NewTaskData = {
 
 type TaskFormProps = {
   onAddTask: (task: NewTaskData) => void;
+  initialDate?: string;
 };
 
-export function TaskForm({ onAddTask }: TaskFormProps) {
-  const [errorMessage, setErrorMessage] = useState('');
+export function TaskForm({ onAddTask, initialDate = "" }: TaskFormProps) {
+  const [errorMessage, setErrorMessage] = useState("");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
 
-    const title = String(formData.get('title') || '').trim();
-    const date = String(formData.get('date') || '');
+    const title = String(formData.get("title") || "").trim();
+    const date = String(formData.get("date") || "");
 
     if (!title) {
-      setErrorMessage('Wpisz tytuł zadania.');
+      setErrorMessage("Wpisz tytuł zadania.");
       return;
     }
 
     if (!date) {
-      setErrorMessage('Wybierz datę wykonania zadania.');
+      setErrorMessage("Wybierz datę wykonania zadania.");
       return;
     }
 
     const year = Number(date.slice(0, 4));
 
     if (year < 2026 || year > 2035) {
-      setErrorMessage('Wybierz poprawną datę między 2026 a 2035 rokiem.');
+      setErrorMessage("Wybierz poprawną datę między 2026 a 2035 rokiem.");
       return;
     }
 
     onAddTask({
       title,
-      description: String(formData.get('description') || '').trim(),
-      assignedTo: formData.get('assignedTo') as AssignedUser,
-      category: formData.get('category') as TaskCategory,
-      priority: formData.get('priority') as TaskPriority,
+      description: String(formData.get("description") || "").trim(),
+      assignedTo: formData.get("assignedTo") as AssignedUser,
+      category: formData.get("category") as TaskCategory,
+      priority: formData.get("priority") as TaskPriority,
       date,
-      time: String(formData.get('time') || ''),
+      time: String(formData.get("time") || ""),
     });
 
-    setErrorMessage('');
+    setErrorMessage("");
     event.currentTarget.reset();
   }
 
@@ -65,7 +62,7 @@ export function TaskForm({ onAddTask }: TaskFormProps) {
     <form
       className="task-form"
       onSubmit={handleSubmit}
-      onReset={() => setErrorMessage('')}
+      onReset={() => setErrorMessage("")}
     >
       {errorMessage && <div className="form-error">{errorMessage}</div>}
 
@@ -117,7 +114,7 @@ export function TaskForm({ onAddTask }: TaskFormProps) {
 
         <label>
           Data
-          <input name="date" type="date" />
+          <input name="date" type="date" defaultValue={initialDate} />
         </label>
 
         <label>

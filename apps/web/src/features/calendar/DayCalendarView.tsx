@@ -23,8 +23,17 @@ export function DayCalendarView({ selectedDate, tasks }: DayCalendarViewProps) {
   return (
     <div className="day-view">
       <div className="day-view-header">
-        <h3>{formatFullCalendarDate(selectedDateString)}</h3>
-        <p>Terminy wybranego dnia.</p>
+        <div>
+          <h3>{formatFullCalendarDate(selectedDateString)}</h3>
+          <p>Terminy wybranego dnia.</p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => navigate(`/zadania?date=${selectedDateString}`)}
+        >
+          + Dodaj zadanie
+        </button>
       </div>
 
       {dayTasks.length === 0 ? (
