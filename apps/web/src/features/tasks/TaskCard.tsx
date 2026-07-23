@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import type { Task, TaskStatus } from "./taskTypes";
-import { isTaskOverdue } from "./taskUtils";
+import { getAssignedUserLabel, isTaskOverdue } from "./taskUtils";
 
 type TaskCardProps = {
   task: Task;
@@ -56,8 +56,9 @@ export function TaskCard({
         <h3>{task.title}</h3>
 
         <p className="task-subline">
-          {task.category} · {task.assignedTo} · utworzył: {task.createdBy} ·
-          komentarze: {task.comments.length}
+          {task.category} · {getAssignedUserLabel(task.assignedTo)} · utworzył:{" "}
+          {getAssignedUserLabel(task.createdBy)} · komentarze:{" "}
+          {task.comments.length}
         </p>
 
         {isDetailsVisible && (

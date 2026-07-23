@@ -79,9 +79,9 @@ export function TaskForm({ onAddTask, initialDate = "" }: TaskFormProps) {
         <label>
           Przypisane do
           <select name="assignedTo" defaultValue="Operator">
-            <option>Admin</option>
-            <option>Operator</option>
-            <option>Oboje</option>
+            <option value="Admin">Mateusz</option>
+            <option value="Operator">Agnieszka</option>
+            <option value="Oboje">Oboje</option>
           </select>
         </label>
 

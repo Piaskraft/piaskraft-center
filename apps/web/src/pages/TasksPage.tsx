@@ -227,7 +227,11 @@ export function TasksPage() {
               }
               onClick={() => setActiveFilter(filter)}
             >
-              {filter}
+              {filter === "Admin"
+                ? "Mateusz"
+                : filter === "Operator"
+                  ? "Agnieszka"
+                  : filter}
               <span>{taskFilterCounts[filter]}</span>
             </button>
           ))}

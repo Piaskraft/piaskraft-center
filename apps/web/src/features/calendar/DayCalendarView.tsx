@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import type { Task } from "../tasks/taskTypes";
-import { isTaskOverdue } from "../tasks/taskUtils";
+import { getAssignedUserLabel, isTaskOverdue } from "../tasks/taskUtils";
 import {
   formatDate,
   formatFullCalendarDate,
@@ -61,7 +61,8 @@ export function DayCalendarView({ selectedDate, tasks }: DayCalendarViewProps) {
                 <div className="day-event-content">
                   <h3>{task.title}</h3>
                   <p>
-                    {task.category} · {task.assignedTo} · {task.priority}
+                    {task.category} · {getAssignedUserLabel(task.assignedTo)} ·{" "}
+                    {task.priority}
                   </p>
                 </div>
 

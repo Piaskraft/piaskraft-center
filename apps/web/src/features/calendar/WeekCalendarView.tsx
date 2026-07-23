@@ -1,6 +1,7 @@
-import type { Task } from '../tasks/taskTypes';
-import { isTaskOverdue } from '../tasks/taskUtils';
-import { getCalendarStatusLabel } from './calendarUtils';
+import { useNavigate } from "react-router-dom";
+import type { Task } from "../tasks/taskTypes";
+import { getAssignedUserLabel, isTaskOverdue } from "../tasks/taskUtils";
+import { getCalendarStatusLabel } from "./calendarUtils";
 
 type WeekDay = {
   name: string;
@@ -13,6 +14,7 @@ type WeekCalendarViewProps = {
 };
 
 export function WeekCalendarView({ weekDays, tasks }: WeekCalendarViewProps) {
+  const navigate = useNavigate();
   return (
     <div className="week-grid">
       {weekDays.map((day) => {
@@ -35,16 +37,18 @@ export function WeekCalendarView({ weekDays, tasks }: WeekCalendarViewProps) {
                   return (
                     <div
                       key={task.id}
+                      onClick={() => navigate(`/zadania?task=${task.id}`)}
                       className={
                         isOverdue
-                          ? 'week-event week-event-overdue'
-                          : 'week-event'
+                          ? "week-event week-event-overdue"
+                          : "week-event"
                       }
                     >
-                      <span>{task.time || 'Bez godziny'}</span>
+                      <span>{task.time || "Bez godziny"}</span>
                       <strong>{task.title}</strong>
                       <small>
-                        {task.category} · {task.assignedTo} ·{' '}
+                        {task.category} ·{" "}
+                        {getAssignedUserLabel(task.assignedTo)} ·{" "}
                         {getCalendarStatusLabel(task)}
                       </small>
                     </div>
