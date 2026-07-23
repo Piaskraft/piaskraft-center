@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import type { Task } from "../tasks/taskTypes";
 import { formatCalendarWeekday } from "./calendarUtils";
 
@@ -20,6 +21,7 @@ export function MonthCalendarView({
   today,
   onSelectDay,
 }: MonthCalendarViewProps) {
+  const navigate = useNavigate();
   return (
     <div className="month-grid">
       {monthDays.map((day, index) => {
@@ -36,7 +38,14 @@ export function MonthCalendarView({
                 ? "month-day-card month-day-card-today"
                 : "month-day-card"
             }
-            onClick={() => onSelectDay(day.date)}
+            onClick={() => {
+              if (dayTasks.length === 1) {
+                navigate(`/zadania?task=${dayTasks[0].id}`);
+                return;
+              }
+
+              onSelectDay(day.date);
+            }}
           >
             <div className="month-day-number">{day.dayNumber}</div>
             <div className="month-day-date">

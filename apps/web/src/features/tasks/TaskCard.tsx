@@ -11,11 +11,13 @@ type TaskCardProps = {
   onCancelTask: (taskId: number) => void;
   onArchiveTask: (taskId: number) => void;
   onRestoreTask: (taskId: number) => void;
+  isInitiallyExpanded?: boolean;
 };
 
 export function TaskCard({
   task,
   taskStatuses,
+  isInitiallyExpanded = false,
   onChangeStatus,
   onAddComment,
   onDeleteComment,
@@ -23,7 +25,7 @@ export function TaskCard({
   onArchiveTask,
   onRestoreTask,
 }: TaskCardProps) {
-  const [isDetailsVisible, setIsDetailsVisible] = useState(false);
+  const [isDetailsVisible, setIsDetailsVisible] = useState(isInitiallyExpanded);
   const [isCommentFormVisible, setIsCommentFormVisible] = useState(false);
 
   const isOverdue = isTaskOverdue(task);

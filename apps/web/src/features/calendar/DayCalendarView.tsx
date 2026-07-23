@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import type { Task } from "../tasks/taskTypes";
 import { isTaskOverdue } from "../tasks/taskUtils";
 import {
@@ -12,6 +13,7 @@ type DayCalendarViewProps = {
 };
 
 export function DayCalendarView({ selectedDate, tasks }: DayCalendarViewProps) {
+  const navigate = useNavigate();
   const selectedDateString = formatDate(selectedDate);
 
   const dayTasks = tasks
@@ -38,6 +40,7 @@ export function DayCalendarView({ selectedDate, tasks }: DayCalendarViewProps) {
             return (
               <article
                 key={task.id}
+                onClick={() => navigate(`/zadania?task=${task.id}`)}
                 className={
                   isOverdue ? "day-event day-event-overdue" : "day-event"
                 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { TaskCard } from "../features/tasks/TaskCard";
 import { TaskForm, type NewTaskData } from "../features/tasks/TaskForm";
 import {
@@ -18,6 +19,8 @@ import {
 import type { Task, TaskStatus } from "../features/tasks/taskTypes";
 
 export function TasksPage() {
+  const [searchParams] = useSearchParams();
+  const selectedTaskId = Number(searchParams.get("task"));
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [activeFilter, setActiveFilter] = useState<TaskFilter>("Wszystkie");
@@ -250,6 +253,7 @@ export function TasksPage() {
               key={task.id}
               task={task}
               taskStatuses={taskStatuses}
+              isInitiallyExpanded={task.id === selectedTaskId}
               onChangeStatus={handleChangeTaskStatus}
               onAddComment={handleAddTaskComment}
               onDeleteComment={handleDeleteTaskComment}
