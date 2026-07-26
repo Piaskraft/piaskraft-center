@@ -1,4 +1,5 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { useUser } from "../features/users/useUser";
 import "./AppLayout.css";
 
 const menuItems = [
@@ -65,7 +66,10 @@ const pageHeaders: Record<string, { title: string; description: string }> = {
 
 export function AppLayout() {
   const location = useLocation();
+  const { currentUser, setCurrentUserRole } = useUser();
+
   const currentHeader = pageHeaders[location.pathname] ?? pageHeaders["/"];
+
   const formattedDate = new Intl.DateTimeFormat("pl-PL", {
     weekday: "long",
     day: "numeric",
@@ -75,11 +79,13 @@ export function AppLayout() {
 
   const currentDate =
     formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+
   return (
     <div className="app-layout">
       <aside className="sidebar">
         <div className="sidebar-logo">
           <span className="logo-mark">P</span>
+
           <div>
             <strong>Piaskraft</strong>
             <small>Center</small>
@@ -112,9 +118,19 @@ export function AppLayout() {
           <div className="topbar-right">
             <span className="current-date">{currentDate}</span>
 
-            <div className="user-badge">
-              <span>Admin</span>
-            </div>
+            <select
+              className="user-badge"
+              value={currentUser.role}
+              onChange={(event) =>
+                setCurrentUserRole(
+                  event.target.value === "Admin" ? "Admin" : "Operator",
+                )
+              }
+              aria-label="Aktywny użytkownik"
+            >
+              <option value="Admin">Mateusz · Admin</option>
+              <option value="Operator">Agnieszka · Operator</option>
+            </select>
           </div>
         </header>
 

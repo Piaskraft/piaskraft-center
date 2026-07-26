@@ -17,8 +17,10 @@ import {
   type TaskFilter,
 } from "../features/tasks/taskOptions";
 import type { Task, TaskStatus } from "../features/tasks/taskTypes";
+import { useUser } from "../features/users/useUser";
 
 export function TasksPage() {
+  const { currentUser } = useUser();
   const [searchParams] = useSearchParams();
   const selectedTaskId = Number(searchParams.get("task"));
   const initialDate = searchParams.get("date") ?? "";
@@ -59,7 +61,7 @@ export function TasksPage() {
     setActionError("");
 
     try {
-      const createdTask = await createTask(newTask);
+      const createdTask = await createTask(newTask, currentUser.role);
 
       setTasks((currentTasks) => [createdTask, ...currentTasks]);
       setIsFormVisible(false);
@@ -72,7 +74,11 @@ export function TasksPage() {
     setActionError("");
 
     try {
-      const createdComment = await addTaskComment(taskId, content);
+      const createdComment = await addTaskComment(
+        taskId,
+        content,
+        currentUser.role,
+      );
 
       setTasks((currentTasks) =>
         currentTasks.map((task) =>

@@ -1,9 +1,10 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { AppLayout } from './layouts/AppLayout';
-import { DashboardPage } from './pages/DashboardPage';
-import { PlaceholderPage } from './pages/PlaceholderPage';
-import { TasksPage } from './pages/TasksPage';
-import { CalendarPage } from './pages/CalendarPage';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { AppLayout } from "./layouts/AppLayout";
+import { CalendarPage } from "./pages/CalendarPage";
+import { DashboardPage } from "./pages/DashboardPage";
+import { NotificationsPage } from "./pages/NotificationsPage";
+import { PlaceholderPage } from "./pages/PlaceholderPage";
+import { TasksPage } from "./pages/TasksPage";
 
 function App() {
   return (
@@ -11,10 +12,8 @@ function App() {
       <Routes>
         <Route path="/" element={<AppLayout />}>
           <Route index element={<DashboardPage />} />
-
-         <Route path="zadania" element={<TasksPage />} />
-
-         <Route path="kalendarz" element={<CalendarPage />} />
+          <Route path="zadania" element={<TasksPage />} />
+          <Route path="kalendarz" element={<CalendarPage />} />
 
           <Route
             path="produkty-robocze"
@@ -56,15 +55,7 @@ function App() {
             }
           />
 
-          <Route
-            path="powiadomienia"
-            element={
-              <PlaceholderPage
-                title="Powiadomienia"
-                description="Powiadomienia o zadaniach, terminach, produktach i analizach eBay."
-              />
-            }
-          />
+          <Route path="powiadomienia" element={<NotificationsPage />} />
 
           <Route
             path="baza-wiedzy"

@@ -6,6 +6,7 @@ import type {
   TaskPriority,
   TaskStatus,
 } from "./taskTypes";
+import type { AppUserRole } from "../users/userTypes";
 
 const apiBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -61,6 +62,11 @@ const assignedUserToApi = {
   Operator: "OPERATOR",
   Oboje: "BOTH",
 } as const satisfies Record<AssignedUser, ApiAssignedUser>;
+
+const taskAuthorToApi = {
+  Admin: "ADMIN",
+  Operator: "OPERATOR",
+} as const satisfies Record<AppUserRole, ApiTaskAuthor>;
 
 const taskCategoryToApi = {
   Piaskraft: "PIASKRAFT",
@@ -168,7 +174,10 @@ type CreateTaskInput = Pick<
   | "time"
 >;
 
-export async function createTask(task: CreateTaskInput): Promise<Task> {
+export async function createTask(
+  task: CreateTaskInput,
+  createdBy: AppUserRole,
+): Promise<Task> {
   const response = await fetch(`${apiBaseUrl}/tasks`, {
     method: "POST",
     headers: {
@@ -182,7 +191,7 @@ export async function createTask(task: CreateTaskInput): Promise<Task> {
       priority: taskPriorityToApi[task.priority],
       date: task.date,
       time: task.time || undefined,
-      createdBy: "ADMIN",
+      createdBy: taskAuthorToApi[createdBy],
     }),
   });
 
@@ -246,14 +255,18 @@ export async function restoreTask(taskId: number): Promise<Task> {
   return mapTaskFromApi(restoredTask);
 }
 
-export async function addTaskComment(taskId: number, content: string) {
+export async function addTaskComment(
+  taskId: number,
+  content: string,
+  author: AppUserRole,
+): Promise<TaskComment> {
   const response = await fetch(`${apiBaseUrl}/tasks/${taskId}/comments`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      author: "ADMIN",
+      author: taskAuthorToApi[author],
       content,
     }),
   });
@@ -266,6 +279,7 @@ export async function addTaskComment(taskId: number, content: string) {
 
   return mapCommentFromApi(createdComment);
 }
+
 export async function deleteTaskComment(
   taskId: number,
   commentId: number,

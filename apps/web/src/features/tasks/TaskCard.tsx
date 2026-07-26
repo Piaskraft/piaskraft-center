@@ -71,7 +71,7 @@ export function TaskCard({
               <div className="task-comments">
                 {task.comments.map((comment) => (
                   <div key={comment.id} className="task-comment">
-                    <strong>{comment.author}</strong>
+                    <strong>{getAssignedUserLabel(comment.author)}</strong>
                     <span>{comment.createdAt}</span>
                     <p>{comment.content}</p>
 
