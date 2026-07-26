@@ -1,4 +1,12 @@
-import { Controller, Get, ParseEnumPipe, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseEnumPipe,
+  ParseIntPipe,
+  Patch,
+  Query,
+} from '@nestjs/common';
 import { TaskAuthor } from '../generated/prisma/enums';
 import { NotificationsService } from './notifications.service';
 
@@ -12,5 +20,14 @@ export class NotificationsController {
     recipient: TaskAuthor,
   ) {
     return this.notificationsService.findAll(recipient);
+  }
+
+  @Patch(':notificationId/read')
+  markAsRead(
+    @Param('notificationId', ParseIntPipe) notificationId: number,
+    @Query('recipient', new ParseEnumPipe(TaskAuthor))
+    recipient: TaskAuthor,
+  ) {
+    return this.notificationsService.markAsRead(notificationId, recipient);
   }
 }

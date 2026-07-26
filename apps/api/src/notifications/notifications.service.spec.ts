@@ -5,7 +5,12 @@ import { NotificationsService } from './notifications.service';
 describe('NotificationsService', () => {
   let service: NotificationsService;
 
+  const findManyMock = jest.fn();
+  const updateManyMock = jest.fn();
+
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         NotificationsService,
@@ -13,7 +18,8 @@ describe('NotificationsService', () => {
           provide: PrismaService,
           useValue: {
             notification: {
-              findMany: jest.fn(),
+              findMany: findManyMock,
+              updateMany: updateManyMock,
             },
           },
         },
@@ -25,5 +31,23 @@ describe('NotificationsService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it('marks one notification as read for its recipient', async () => {
+    updateManyMock.mockResolvedValue({ count: 1 });
+
+    await expect(service.markAsRead(7, 'OPERATOR')).resolves.toEqual({
+      success: true,
+    });
+
+    expect(updateManyMock).toHaveBeenCalledWith({
+      where: {
+        id: 7,
+        recipient: 'OPERATOR',
+      },
+      data: {
+        isRead: true,
+      },
+    });
   });
 });
