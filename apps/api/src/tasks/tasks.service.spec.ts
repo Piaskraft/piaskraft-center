@@ -13,6 +13,9 @@ describe('TasksService', () => {
   const findManyMock =
     jest.fn<(options: unknown) => Promise<Array<{ id: number }>>>();
 
+  const createMock =
+    jest.fn<(options: unknown) => Promise<Record<string, unknown>>>();
+
   const findUniqueMock = jest.fn<
     (options: unknown) => Promise<{
       id: number;
@@ -30,6 +33,7 @@ describe('TasksService', () => {
   const prismaMock = {
     task: {
       findMany: findManyMock,
+      create: createMock,
       findUnique: findUniqueMock,
       update: updateMock,
     },
@@ -58,6 +62,50 @@ describe('TasksService', () => {
       },
     });
   });
+
+  it('creates a notification when a task is assigned to the other user', async () => {
+    const createdTask = {
+      id: 1,
+      title: 'Sprawdź produkt',
+    };
+
+    createMock.mockResolvedValue(createdTask);
+
+    await expect(
+      service.create({
+        title: 'Sprawdź produkt',
+        description: 'Opis zadania',
+        assignedTo: 'OPERATOR',
+        category: 'PIASKRAFT',
+        createdBy: 'ADMIN',
+      }),
+    ).resolves.toEqual(createdTask);
+
+    expect(createMock).toHaveBeenCalledWith({
+      data: {
+        title: 'Sprawdź produkt',
+        description: 'Opis zadania',
+        assignedTo: 'OPERATOR',
+        category: 'PIASKRAFT',
+        date: null,
+        time: null,
+        createdBy: 'ADMIN',
+        notifications: {
+          create: {
+            type: 'TASK_CREATED',
+            recipient: 'OPERATOR',
+            actor: 'ADMIN',
+            title: 'Nowe zadanie',
+            message: 'Przypisano Ci zadanie: Sprawdź produkt',
+          },
+        },
+      },
+      include: {
+        comments: true,
+      },
+    });
+  });
+
   it('archives a completed task', async () => {
     const archivedTask = {
       id: 1,

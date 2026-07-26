@@ -13,6 +13,15 @@ export class TasksService {
   constructor(private readonly prisma: PrismaService) {}
 
   create(data: CreateTaskDto) {
+    const notificationRecipient =
+      data.createdBy === 'ADMIN' &&
+      (data.assignedTo === 'OPERATOR' || data.assignedTo === 'BOTH')
+        ? 'OPERATOR'
+        : data.createdBy === 'OPERATOR' &&
+            (data.assignedTo === 'ADMIN' || data.assignedTo === 'BOTH')
+          ? 'ADMIN'
+          : null;
+
     return this.prisma.task.create({
       data: {
         title: data.title,
@@ -23,6 +32,19 @@ export class TasksService {
         date: data.date ? new Date(`${data.date}T00:00:00.000Z`) : null,
         time: data.time ? new Date(`1970-01-01T${data.time}:00.000Z`) : null,
         createdBy: data.createdBy,
+        ...(notificationRecipient
+          ? {
+              notifications: {
+                create: {
+                  type: 'TASK_CREATED',
+                  recipient: notificationRecipient,
+                  actor: data.createdBy,
+                  title: 'Nowe zadanie',
+                  message: `Przypisano Ci zadanie: ${data.title}`,
+                },
+              },
+            }
+          : {}),
       },
       include: {
         comments: true,
