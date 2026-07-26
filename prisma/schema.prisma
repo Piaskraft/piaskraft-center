@@ -49,21 +49,28 @@ enum TaskStatus {
   CANCELLED
 }
 
+enum NotificationType {
+  TASK_CREATED
+  TASK_STATUS_CHANGED
+  TASK_COMMENT_ADDED
+}
+
 model Task {
-  id          Int           @id @default(autoincrement())
-  title       String
-  description String        @db.Text
-  assignedTo  TaskAssignee
-  category    TaskCategory
-  priority    TaskPriority  @default(NORMAL)
-  status      TaskStatus    @default(NEW)
-  archivedAt DateTime?
-  date        DateTime?      @db.Date
-  time        DateTime?      @db.Time(0)
-  createdBy   TaskAuthor
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  comments    TaskComment[]
+  id            Int            @id @default(autoincrement())
+  title         String
+  description   String         @db.Text
+  assignedTo    TaskAssignee
+  category      TaskCategory
+  priority      TaskPriority   @default(NORMAL)
+  status        TaskStatus     @default(NEW)
+  archivedAt    DateTime?
+  date          DateTime?      @db.Date
+  time          DateTime?      @db.Time(0)
+  createdBy     TaskAuthor
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  comments      TaskComment[]
+  notifications Notification[]
 
   @@index([date])
   @@index([assignedTo, status])
@@ -77,5 +84,21 @@ model TaskComment {
   createdAt DateTime   @default(now())
   task      Task       @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
+  @@index([taskId])
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  type      NotificationType
+  recipient TaskAuthor
+  actor     TaskAuthor?
+  title     String
+  message   String           @db.Text
+  isRead    Boolean          @default(false)
+  taskId    Int?
+  createdAt DateTime         @default(now())
+  task      Task?            @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([recipient, isRead, createdAt])
   @@index([taskId])
 }
