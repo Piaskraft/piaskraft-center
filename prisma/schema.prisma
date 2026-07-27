@@ -102,3 +102,58 @@ model Notification {
   @@index([recipient, isRead, createdAt])
   @@index([taskId])
 }
+enum PrestaWorkflowStatus {
+  TO_PREPARE
+  IN_PROGRESS
+  TO_REVIEW
+  READY
+  ADDED
+  REJECTED
+}
+
+enum EbayWorkflowStatus {
+  TO_PREPARE
+  IN_PROGRESS
+  TO_REVIEW
+  READY
+  LISTED
+  REJECTED
+}
+
+model WorkProduct {
+  id              Int                   @id @default(autoincrement())
+  name            String
+  ean             String?               @unique
+  sku             String?
+  manufacturer    String?
+  source          String
+  sourceUrl       String?
+  sourceProductId String?
+
+  targetPresta    Boolean               @default(false)
+  targetEbay      Boolean               @default(false)
+  prestaStatus    PrestaWorkflowStatus?
+  ebayStatus      EbayWorkflowStatus?
+  prestaAssignee  TaskAuthor?
+  ebayAssignee    TaskAuthor?
+
+  piaskraftUrl    String?
+  prestaProductId String?
+  prestaAddedAt   DateTime?
+
+  ebayUrl         String?
+  ebayItemId      String?
+  ebayListedAt    DateTime?
+
+  notes           String?               @db.Text
+  createdBy       TaskAuthor
+  archivedAt      DateTime?
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  @@unique([source, sku])
+  @@unique([source, sourceProductId])
+  @@index([prestaAssignee, prestaStatus])
+  @@index([ebayAssignee, ebayStatus])
+  @@index([archivedAt])
+}
