@@ -19,6 +19,14 @@ export class WorkProductsController {
   create(@Body() data: CreateWorkProductDto) {
     return this.workProductsService.create(data);
   }
+  @Patch(':productId/archive')
+  archive(@Param('productId', ParseIntPipe) productId: number) {
+    return this.workProductsService.archive(productId);
+  }
+  @Patch(':productId/restore')
+  restore(@Param('productId', ParseIntPipe) productId: number) {
+    return this.workProductsService.restore(productId);
+  }
 
   @Patch(':productId')
   update(

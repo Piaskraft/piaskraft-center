@@ -157,6 +157,59 @@ export class WorkProductsService {
       },
     });
   }
+  async archive(productId: number) {
+    const product = await this.prisma.workProduct.findUnique({
+      where: {
+        id: productId,
+      },
+    });
+
+    if (!product) {
+      throw new NotFoundException('Produkt roboczy nie istnieje.');
+    }
+
+    if (product.archivedAt) {
+      throw new BadRequestException(
+        'Produkt roboczy znajduje się już w archiwum.',
+      );
+    }
+
+    return this.prisma.workProduct.update({
+      where: {
+        id: productId,
+      },
+      data: {
+        archivedAt: new Date(),
+      },
+    });
+  }
+
+  async restore(productId: number) {
+    const product = await this.prisma.workProduct.findUnique({
+      where: {
+        id: productId,
+      },
+    });
+
+    if (!product) {
+      throw new NotFoundException('Produkt roboczy nie istnieje.');
+    }
+
+    if (!product.archivedAt) {
+      throw new BadRequestException(
+        'Produkt roboczy nie znajduje się w archiwum.',
+      );
+    }
+
+    return this.prisma.workProduct.update({
+      where: {
+        id: productId,
+      },
+      data: {
+        archivedAt: null,
+      },
+    });
+  }
 
   findAll() {
     return this.prisma.workProduct.findMany({
