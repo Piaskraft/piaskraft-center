@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { WorkProductsService } from './work-products.service';
 
 @Controller('work-products')
@@ -8,5 +8,10 @@ export class WorkProductsController {
   @Get()
   findAll() {
     return this.workProductsService.findAll();
+  }
+
+  @Get(':productId')
+  findOne(@Param('productId', ParseIntPipe) productId: number) {
+    return this.workProductsService.findOne(productId);
   }
 }
