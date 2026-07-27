@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateWorkProductDto } from './dto/create-work-product.dto';
+import { UpdateWorkProductDto } from './dto/update-work-product.dto';
 
 @Injectable()
 export class WorkProductsService {
@@ -68,6 +69,91 @@ export class WorkProductsService {
 
         notes: data.notes || null,
         createdBy: data.createdBy,
+      },
+    });
+  }
+
+  async update(productId: number, data: UpdateWorkProductDto) {
+    const existingProduct = await this.prisma.workProduct.findUnique({
+      where: {
+        id: productId,
+      },
+    });
+
+    if (!existingProduct) {
+      throw new NotFoundException('Produkt roboczy nie istnieje.');
+    }
+
+    const targetPresta = data.targetPresta ?? existingProduct.targetPresta;
+    const targetEbay = data.targetEbay ?? existingProduct.targetEbay;
+
+    if (!targetPresta && !targetEbay) {
+      throw new BadRequestException(
+        'Produkt musi być przeznaczony do PrestaShop, eBay lub obu kanałów.',
+      );
+    }
+
+    const prestaStatus = targetPresta
+      ? (data.prestaStatus ?? existingProduct.prestaStatus ?? 'TO_PREPARE')
+      : null;
+
+    const ebayStatus = targetEbay
+      ? (data.ebayStatus ?? existingProduct.ebayStatus ?? 'TO_PREPARE')
+      : null;
+
+    return this.prisma.workProduct.update({
+      where: {
+        id: productId,
+      },
+      data: {
+        ...(data.name !== undefined ? { name: data.name } : {}),
+        ...(data.ean !== undefined ? { ean: data.ean || null } : {}),
+        ...(data.sku !== undefined ? { sku: data.sku || null } : {}),
+        ...(data.manufacturer !== undefined
+          ? { manufacturer: data.manufacturer || null }
+          : {}),
+        ...(data.source !== undefined ? { source: data.source } : {}),
+        ...(data.sourceUrl !== undefined
+          ? { sourceUrl: data.sourceUrl || null }
+          : {}),
+        ...(data.sourceProductId !== undefined
+          ? { sourceProductId: data.sourceProductId || null }
+          : {}),
+        targetPresta,
+        targetEbay,
+        prestaStatus,
+        ebayStatus,
+        prestaAssignee: targetPresta
+          ? data.prestaAssignee !== undefined
+            ? data.prestaAssignee
+            : existingProduct.prestaAssignee
+          : null,
+        ebayAssignee: targetEbay
+          ? data.ebayAssignee !== undefined
+            ? data.ebayAssignee
+            : existingProduct.ebayAssignee
+          : null,
+        ...(data.piaskraftUrl !== undefined
+          ? { piaskraftUrl: data.piaskraftUrl || null }
+          : {}),
+        ...(data.prestaProductId !== undefined
+          ? { prestaProductId: data.prestaProductId || null }
+          : {}),
+        ...(data.ebayUrl !== undefined
+          ? { ebayUrl: data.ebayUrl || null }
+          : {}),
+        ...(data.ebayItemId !== undefined
+          ? { ebayItemId: data.ebayItemId || null }
+          : {}),
+        ...(data.notes !== undefined ? { notes: data.notes || null } : {}),
+        prestaAddedAt:
+          prestaStatus === 'ADDED'
+            ? (existingProduct.prestaAddedAt ?? new Date())
+            : null,
+        ebayListedAt:
+          ebayStatus === 'LISTED'
+            ? (existingProduct.ebayListedAt ?? new Date())
+            : null,
       },
     });
   }
